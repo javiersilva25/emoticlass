@@ -1,154 +1,594 @@
-/* 🎨 Paleta Lemac Datalab */
+/* 🎨 Sistema de Análisis de Emociones - CSS Paleta Pastel Verde */
+/* Paleta de colores pasteles moderna y relajante */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 :root {
-  --verde-teal: #2DB29B;
-  --verde-oscuro: #207568;
-  --gris-suave: #f5f7f9;
-  --gris-texto: #4b5563;
-  --blanco: #ffffff;
-
-  /* 🌈 Gradientes */
-  --gradiente-principal: linear-gradient(135deg, var(--verde-teal), var(--verde-oscuro));
-  --gradiente-claro: linear-gradient(135deg, var(--blanco), var(--gris-suave));
-  --gradiente-navbar: linear-gradient(90deg, var(--verde-oscuro), var(--verde-teal));
-  --gradiente-acento: linear-gradient(135deg, var(--verde-teal), var(--blanco));
+  /* Colores principales - Verde Pastel */
+  --primary-green: #86efac;
+  --primary-dark: #4ade80;
+  --primary-light: #bbf7d0;
+  --secondary-mint: #a7f3d0;
+  --accent-sage: #d1fae5;
+  
+  /* Colores complementarios pasteles */
+  --pastel-blue: #bfdbfe;
+  --pastel-purple: #ddd6fe;
+  --pastel-pink: #fce7f3;
+  --pastel-yellow: #fef3c7;
+  --pastel-peach: #fed7aa;
+  
+  /* Colores de fondo */
+  --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #d1fae5 100%);
+  --bg-light: #f8fafc;
+  --bg-white: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-glass: rgba(255, 255, 255, 0.3);
+  
+  /* Colores de texto */
+  --text-primary: #064e3b;
+  --text-secondary: #047857;
+  --text-light: #6b7280;
+  --text-white: #ffffff;
+  --text-muted: #9ca3af;
+  
+  /* Efectos y sombras suaves */
+  --shadow-sm: 0 1px 2px 0 rgba(34, 197, 94, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(34, 197, 94, 0.15);
+  --shadow-lg: 0 10px 15px -3px rgba(34, 197, 94, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(34, 197, 94, 0.25);
+  --shadow-glow: 0 0 20px rgba(134, 239, 172, 0.4);
+  
+  /* Bordes y radios */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  
+  /* Transiciones */
+  --transition-fast: 0.15s ease-out;
+  --transition-normal: 0.3s ease-out;
+  --transition-slow: 0.5s ease-out;
 }
 
-/* 🔹 Base */
+/* Reset y configuración base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
-  background: var(--gradiente-claro);
-  color: var(--gris-texto);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-gradient);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* Links */
-a {
-  transition: all 0.2s ease-in-out;
-}
-a:hover {
-  opacity: 0.85;
+/* Efectos de fondo animados suaves */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(134, 239, 172, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(167, 243, 208, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(187, 247, 208, 0.1) 0%, transparent 50%);
+  z-index: -1;
+  animation: backgroundFloat 25s ease-in-out infinite;
 }
 
-/* Navbar personalizado */
+@keyframes backgroundFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-8px) rotate(0.5deg); }
+  66% { transform: translateY(4px) rotate(-0.5deg); }
+}
+
+/* Navegación mejorada con verde pastel */
 .topbar-custom {
-  background: var(--gradiente-navbar);
-  color: var(--blanco);
-  padding: 0.75rem 1rem;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background: rgba(74, 222, 128, 0.9);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(134, 239, 172, 0.3);
+  box-shadow: var(--shadow-lg);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: var(--transition-normal);
 }
 
-/* Badge usuario */
-.userbadge-custom {
-  background: var(--gradiente-principal);
-  color: var(--blanco);
-  padding: 0.25rem 0.6rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
+.topbar-custom:hover {
+  background: rgba(74, 222, 128, 1);
+}
+
+/* Tarjetas con efecto glassmorphism pastel */
+.card-lemac {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(134, 239, 172, 0.3);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.card-lemac::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(134, 239, 172, 0.5), transparent);
+}
+
+.card-lemac:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: var(--shadow-xl), var(--shadow-glow);
+  border-color: rgba(134, 239, 172, 0.5);
+}
+
+/* Formularios modernos con toques pasteles */
+.form-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 2px solid rgba(134, 239, 172, 0.3);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+  color: var(--text-primary);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  background: var(--bg-white);
+  box-shadow: 0 0 0 4px rgba(134, 239, 172, 0.2);
+  transform: translateY(-2px);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Botones mejorados con gradientes pasteles */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-mint) 100%);
+  color: var(--text-primary);
   font-weight: 600;
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-md);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Flash messages */
-.flash {
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: var(--transition-normal);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-xl);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-green) 100%);
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:active {
+  transform: translateY(-1px);
+}
+
+/* Botones secundarios pasteles */
+.btn-secondary {
+  background: linear-gradient(135deg, var(--bg-white) 0%, var(--accent-sage) 100%);
+  color: var(--text-secondary);
+  border: 2px solid var(--primary-light);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-secondary:hover {
+  background: var(--primary-light);
+  color: var(--text-primary);
+  border-color: var(--primary-green);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Animaciones de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-fade-in-left {
+  animation: fadeInLeft 0.6s ease-out;
+}
+
+.animate-fade-in-right {
+  animation: fadeInRight 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s ease-out;
+}
+
+/* Indicadores con colores pasteles */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-xl);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-online {
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-dark));
+  color: var(--text-primary);
+  animation: pulse 3s infinite;
+}
+
+.status-offline {
+  background: linear-gradient(135deg, var(--pastel-peach), #fbbf24);
+  color: var(--text-primary);
+}
+
+.status-warning {
+  background: linear-gradient(135deg, var(--pastel-yellow), #f59e0b);
+  color: var(--text-primary);
+}
+
+/* Barras de progreso emocional pasteles */
+.emotion-bar {
+  background: rgba(134, 239, 172, 0.2);
+  border-radius: var(--radius-xl);
+  height: 2rem;
+  overflow: hidden;
+  position: relative;
+  margin: 0.5rem 0;
+}
+
+.emotion-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-green), var(--secondary-mint));
+  border-radius: var(--radius-xl);
+  transition: width 1s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.emotion-fill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Dashboard específico con pasteles */
+.dashboard-grid {
+  display: grid;
+  gap: 1.5rem;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.metric-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid rgba(134, 239, 172, 0.3);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-green), var(--secondary-mint));
+}
+
+.metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-xl);
+  border-color: rgba(134, 239, 172, 0.5);
+}
+
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary-dark), var(--secondary-mint));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0.5rem 0;
+}
+
+/* Video feed mejorado con bordes pasteles */
+.video-container {
+  position: relative;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(134, 239, 172, 0.3);
+}
+
+.video-feed {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: var(--transition-normal);
+}
+
+.video-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(4, 120, 87, 0.8));
+  color: white;
+  padding: 1rem;
+  transform: translateY(100%);
+  transition: var(--transition-normal);
+}
+
+.video-container:hover .video-overlay {
+  transform: translateY(0);
+}
+
+/* Flash messages con pasteles */
+.flash-message {
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-lg);
   margin-bottom: 1rem;
   font-weight: 500;
-}
-.flash.success {
-  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-  color: #065f46;
-  border: 1px solid #10b981;
-}
-.flash.error {
-  background: linear-gradient(135deg, #fee2e2, #fecaca);
-  color: #991b1b;
-  border: 1px solid #ef4444;
-}
-.flash.warning {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  color: #92400e;
-  border: 1px solid #f59e0b;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  animation: slideInDown 0.4s ease-out;
 }
 
-/* Formularios */
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(45, 178, 155, 0.4);
-  border-radius: 0.375rem;
+.flash-success {
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-dark));
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
 }
 
-/* Botón animado */
-.animated-btn {
-  transition: transform 0.15s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-.animated-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 14px rgba(0,0,0,0.12);
+.flash-error {
+  background: linear-gradient(135deg, var(--pastel-pink), #f472b6);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
 }
 
-/* Botones principales Lemac */
-.btn-primary {
-  background: var(--gradiente-principal);
-  color: var(--blanco);
-  font-weight: 600;
-  padding: 0.625rem 1rem;
-  border-radius: 0.5rem;
-  text-align: center;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  transition: all 0.2s ease-in-out;
-}
-.btn-primary:hover {
-  filter: brightness(1.05);
-}
-.btn-primary:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(45, 178, 155, 0.4);
+.flash-warning {
+  background: linear-gradient(135deg, var(--pastel-yellow), var(--pastel-peach));
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
 }
 
-/* Tarjeta Lemac */
-.card-lemac {
-  background: var(--blanco);
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.08);
-  border: 1px solid #eef2f7;
-  padding: 1.5rem;
-}
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  font-weight: 700;
-  color: #111827;
-}
-.section-title::before {
-  content:"";
-  width:10px;
-  height:10px;
-  border-radius:999px;
-  background: var(--verde-teal);
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Botones secundarios */
-.btn-secondary {
-  background: var(--gradiente-acento);
-  color: #0f766e;
-  border-radius: .375rem;
-  padding: .5rem 1rem;
-  font-weight: 600;
+/* Loading y estados con verde pastel */
+.loading-spinner {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid rgba(134, 239, 172, 0.3);
+  border-top: 2px solid var(--primary-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
-.btn-secondary:hover {
-  filter: brightness(.97);
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
-.btn-danger {
-  background: linear-gradient(135deg, #ef4444, #b91c1c);
-  color:#fff;
-  border-radius:.375rem;
-  padding:.5rem 1rem;
-  font-weight:600;
+
+/* Responsive design mejorado */
+@media (max-width: 768px) {
+  .card-lemac {
+    padding: 1.5rem;
+    margin: 0.5rem;
+  }
+  
+  .btn-primary {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .metric-value {
+    font-size: 2rem;
+  }
 }
-.btn-danger:hover {
-  filter: brightness(.95);
+
+@media (max-width: 480px) {
+  .card-lemac {
+    padding: 1rem;
+  }
+  
+  .form-input {
+    padding: 0.875rem 1rem;
+  }
+  
+  .topbar-custom {
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Focus visible con verde pastel */
+*:focus-visible {
+  outline: 2px solid var(--primary-green);
+  outline-offset: 2px;
+}
+
+/* Scrollbar personalizada con pasteles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(134, 239, 172, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--primary-green), var(--secondary-mint));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-green));
+}
+
+/* Efectos hover globales */
+.hover-lift {
+  transition: var(--transition-normal);
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Utilidades adicionales con pasteles */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary-dark), var(--secondary-mint));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-gradient {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, var(--primary-green), var(--secondary-mint)) border-box;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(134, 239, 172, 0.3);
 }

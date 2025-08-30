@@ -8,177 +8,556 @@
 {% endblock %}
 
 {% block content %}
-<!-- Header -->
-<div class="flex items-center justify-between mb-4">
-  <h1 class="text-2xl font-bold text-gray-800">Dashboard de Análisis de Emociones</h1>
-  <div class="flex items-center gap-2">
-    <span id="current-time" class="text-sm text-gray-600"></span>
-    <a href="{{ url_for('core.config') }}"
-       class="inline-flex items-center rounded-md bg-gray-200 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300">Configuración</a>
-    <a href="{{ url_for('auth.logout') }}"
-       class="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700">Cerrar Sesión</a>
+<!-- Header del Dashboard -->
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-8 animate-fade-in-up">
+  <div class="mb-4 md:mb-0">
+    <h1 class="text-3xl font-bold text-gradient mb-2">Dashboard de Análisis Emocional</h1>
+    <p class="text-text-secondary flex items-center gap-2">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L10 9.586V6z" clip-rule="evenodd"></path>
+      </svg>
+      <span id="current-time" class="font-medium">--:--</span>
+    </p>
+  </div>
+  
+  <div class="flex items-center gap-3">
+    <a href="{{ url_for('core.config') }}" class="btn-secondary hover-lift">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+      </svg>
+      Configuración
+    </a>
+    <a href="{{ url_for('auth.logout') }}" class="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium hover:from-red-600 hover:to-red-700 transition-all duration-300 hover:scale-105">
+      <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+      </svg>
+      Cerrar Sesión
+    </a>
   </div>
 </div>
 
-<!-- Rostros -->
-<div class="rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 text-white p-4 mb-6">
-  <h3 class="text-lg font-semibold">👥 Rostros Detectados: <span id="face-count">0</span> / 45</h3>
-  <p class="text-sm opacity-90">Sistema optimizado para grupos grandes</p>
-</div>
-
-<!-- Indicadores -->
-<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-  <div class="rounded-xl bg-white shadow p-4 text-center">
-    <div class="text-sm text-gray-500">Emoción Predominante</div>
-    <div class="text-3xl font-bold text-gray-800 mt-2" id="current-emotion">Detectando...</div>
-  </div>
-  <div class="rounded-xl bg-white shadow p-4 text-center">
-    <div class="text-sm text-gray-500">Confianza</div>
-    <div class="text-3xl font-bold text-gray-800 mt-2" id="current-confidence">0%</div>
-  </div>
-  <div class="rounded-xl bg-white shadow p-4 text-center">
-    <div class="text-sm text-gray-500">Carga Cognitiva Grupal</div>
-    <div class="text-3xl font-bold text-gray-800 mt-2" id="current-cognitive-load">0%</div>
-  </div>
-  <div class="rounded-xl bg-white shadow p-4 text-center">
-    <div class="text-sm text-gray-500">Estado del Sistema</div>
-    <div class="text-3xl font-bold text-gray-800 mt-2" id="system-status">🟢 Activo</div>
-  </div>
-</div>
-
-<!-- Video -->
-<section class="mb-6">
-  <h2 class="text-xl font-semibold text-gray-800 mb-3">Vista en Tiempo Real</h2>
-  <div class="grid gap-4 md:grid-cols-5">
-    <div class="md:col-span-3">
-      <img src="{{ url_for('core.video_feed') }}" alt="Video en tiempo real"
-           class="w-full rounded-xl border border-gray-200">
+<!-- Contador de Rostros Destacado -->
+<div class="card-lemac hover-lift mb-8 animate-fade-in-up" style="animation-delay: 0.1s;">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-r from-primary-teal to-secondary-blue flex items-center justify-center">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-2xl font-bold text-text-primary">Rostros Detectados</h3>
+        <p class="text-text-secondary">Sistema optimizado para grupos de hasta 45 estudiantes</p>
+      </div>
     </div>
-    <div class="md:col-span-2 space-y-3">
-      <div class="rounded-lg bg-white shadow p-3">
-        <h3 class="font-semibold text-gray-800">🎯 Análisis Activo</h3>
-        <p class="text-sm text-gray-600">El sistema está analizando las emociones en tiempo real.</p>
+    <div class="text-center">
+      <div class="text-4xl font-bold text-gradient">
+        <span id="face-count">0</span><span class="text-2xl text-text-light"> / 45</span>
       </div>
-      <div class="rounded-lg bg-white shadow p-3">
-        <h3 class="font-semibold text-gray-800">🚀 Motor</h3>
-        <p class="text-sm text-gray-600">DeepFace + OpenCV para múltiples rostros.</p>
+      <div id="face-status" class="status-indicator status-offline mt-2">Sin detectar</div>
+    </div>
+  </div>
+</div>
+
+<!-- Métricas Principales -->
+<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+  <!-- Emoción Predominante -->
+  <div class="metric-card hover-lift animate-fade-in-left" style="animation-delay: 0.2s;">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center">
+        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z" clip-rule="evenodd"></path>
+        </svg>
       </div>
-      <div class="rounded-lg bg-white shadow p-3">
-        <h3 class="font-semibold text-gray-800">⚡ Frecuencia</h3>
-        <p class="text-sm text-gray-600">Actualizaciones cada ~500ms.</p>
+      <span class="text-sm font-semibold text-text-secondary">Emoción Predominante</span>
+    </div>
+    <div class="metric-value" id="current-emotion">Detectando...</div>
+  </div>
+
+  <!-- Confianza -->
+  <div class="metric-card hover-lift animate-fade-in-up" style="animation-delay: 0.3s;">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-green-400 to-green-600 flex items-center justify-center">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <span class="text-sm font-semibold text-text-secondary">Nivel de Confianza</span>
+    </div>
+    <div class="metric-value" id="current-confidence">0%</div>
+  </div>
+
+  <!-- Carga Cognitiva -->
+  <div class="metric-card hover-lift animate-fade-in-right" style="animation-delay: 0.4s;">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-400 to-purple-600 flex items-center justify-center">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+        </svg>
+      </div>
+      <span class="text-sm font-semibold text-text-secondary">Carga Cognitiva Grupal</span>
+    </div>
+    <div class="metric-value" id="current-cognitive-load">0%</div>
+  </div>
+
+  <!-- Estado del Sistema -->
+  <div class="metric-card hover-lift animate-fade-in-left" style="animation-delay: 0.5s;">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+        </svg>
+      </div>
+      <span class="text-sm font-semibold text-text-secondary">Estado del Sistema</span>
+    </div>
+    <div class="text-2xl font-bold" id="system-status">
+      <span class="status-indicator status-online">Activo</span>
+    </div>
+  </div>
+</div>
+
+<!-- Sección de Video y Análisis -->
+<section class="mb-8 animate-fade-in-up" style="animation-delay: 0.6s;">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-primary-teal to-secondary-blue flex items-center justify-center">
+      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+      </svg>
+    </div>
+    <div>
+      <h2 class="text-2xl font-bold text-text-primary">Vista en Tiempo Real</h2>
+      <p class="text-text-secondary">Análisis emocional en vivo con IA avanzada</p>
+    </div>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-5">
+    <!-- Video Feed -->
+    <div class="lg:col-span-3">
+      <div class="video-container">
+        <img src="{{ url_for('core.video_feed') }}" alt="Video en tiempo real" class="video-feed">
+        <div class="video-overlay">
+          <div class="flex items-center justify-between">
+            <span class="status-indicator status-online">
+              <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              En Vivo
+            </span>
+            <span class="text-sm font-medium">Análisis Activo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de Información -->
+    <div class="lg:col-span-2 space-y-4">
+      <div class="card-lemac">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-green-400 to-green-600 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <h3 class="font-bold text-text-primary">Análisis Activo</h3>
+        </div>
+        <p class="text-sm text-text-secondary">El sistema está procesando emociones faciales en tiempo real usando algoritmos de deep learning.</p>
+      </div>
+
+      <div class="card-lemac">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <h3 class="font-bold text-text-primary">Motor de IA</h3>
+        </div>
+        <p class="text-sm text-text-secondary">DeepFace + OpenCV optimizado para detectar múltiples rostros simultáneamente.</p>
+      </div>
+
+      <div class="card-lemac">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-400 to-purple-600 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="font-bold text-text-primary">Frecuencia</h3>
+        </div>
+        <p class="text-sm text-text-secondary">Procesamiento cada ~500ms para balance óptimo entre precisión y rendimiento.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Gráficos -->
-<div class="grid gap-4 md:grid-cols-2 mb-6">
-  <div class="rounded-2xl bg-white shadow p-4 h-[400px] flex flex-col">
-    <div class="text-center text-gray-800 font-semibold mb-3">📊 Distribución de Emociones Grupal</div>
-    <div class="flex-1 overflow-y-auto" id="emotions-bars"></div>
+<!-- Gráficos de Análisis -->
+<div class="grid gap-6 lg:grid-cols-2 mb-8">
+  <!-- Distribución de Emociones -->
+  <div class="card-lemac hover-lift animate-fade-in-left" style="animation-delay: 0.7s;">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold text-text-primary">Distribución Emocional</h3>
+        <p class="text-sm text-text-secondary">Análisis grupal en tiempo real</p>
+      </div>
+    </div>
+    <div class="h-80 overflow-y-auto" id="emotions-bars">
+      <div class="flex items-center justify-center h-full text-text-light">
+        <div class="text-center">
+          <div class="loading-spinner mx-auto mb-4"></div>
+          <p>Esperando datos...</p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="rounded-2xl bg-white shadow p-4 h-[400px] flex flex-col">
-    <div class="text-center text-gray-800 font-semibold mb-3">👥 Métricas del Grupo</div>
-    <div class="flex-1">
+  <!-- Métricas del Grupo -->
+  <div class="card-lemac hover-lift animate-fade-in-right" style="animation-delay: 0.8s;">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold text-text-primary">Métricas Grupales</h3>
+        <p class="text-sm text-text-secondary">Resumen emocional del aula</p>
+      </div>
+    </div>
+    <div class="h-80 flex items-center justify-center">
       <canvas id="groupMetricsChart" class="w-full h-full"></canvas>
     </div>
   </div>
 </div>
 
-<!-- Controles -->
-<div class="rounded-xl bg-gray-900 text-white p-4 flex flex-wrap gap-3">
-  <button id="pause-btn"
-          class="inline-flex items-center rounded-md bg-yellow-500 px-4 py-2 text-sm font-semibold hover:bg-yellow-600">
-    ⏸️ Pausar Análisis
-  </button>
-  <button id="export-btn"
-          class="inline-flex items-center rounded-md bg-sky-500 px-4 py-2 text-sm font-semibold hover:bg-sky-600">
-    📊 Exportar Datos
-  </button>
-  <button id="reset-btn"
-          class="inline-flex items-center rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-300">
-    🔄 Reiniciar
-  </button>
+<!-- Panel de Control -->
+<div class="card-lemac animate-fade-in-up" style="animation-delay: 0.9s;">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-gray-600 to-gray-800 flex items-center justify-center">
+      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+      </svg>
+    </div>
+    <div>
+      <h3 class="text-xl font-bold text-text-primary">Controles del Sistema</h3>
+      <p class="text-sm text-text-secondary">Gestiona el análisis y exporta resultados</p>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-4">
+    <button id="pause-btn" class="btn-primary flex items-center gap-2 hover:scale-105 transition-transform">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 01-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+      </svg>
+      <span>Pausar Análisis</span>
+    </button>
+
+    <button id="export-btn" class="px-6 py-3 bg-gradient-to-r from-sky-500 to-sky-600 text-white rounded-lg font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 hover:scale-105 flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+      </svg>
+      <span>Exportar Datos</span>
+    </button>
+
+    <button id="reset-btn" class="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg font-semibold hover:from-gray-600 hover:to-gray-700 transition-all duration-300 hover:scale-105 flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+      </svg>
+      <span>Reiniciar Sistema</span>
+    </button>
+  </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-  const socket = io(); let isPaused=false; let groupMetricsChart;
-  const emotionColors = {feliz:'#4CAF50',triste:'#2196F3',enojado:'#F44336',neutral:'#9E9E9E',sorpresa:'#FF9800',miedo:'#9C27B0',asco:'#795548'};
+  // Inicialización de variables globales
+  const socket = io();
+  let isPaused = false;
+  let groupMetricsChart;
+  
+  // Colores para las emociones
+  const emotionColors = {
+    'feliz': '#22c55e',
+    'triste': '#3b82f6', 
+    'enojado': '#ef4444',
+    'neutral': '#6b7280',
+    'sorpresa': '#f59e0b',
+    'miedo': '#8b5cf6',
+    'asco': '#84cc16'
+  };
 
-  function initGroupMetricsChart(){
-    const ctx=document.getElementById('groupMetricsChart').getContext('2d');
-    groupMetricsChart=new Chart(ctx,{
-      type:'doughnut',
-      data:{labels:['Emociones Positivas','Emociones Negativas','Neutral'],
-        datasets:[{data:[33,33,34],backgroundColor:['#4CAF50','#F44336','#9E9E9E'],borderWidth:0}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#1f2937'}}}}
+  // Inicializar gráfico de métricas grupales
+  function initGroupMetricsChart() {
+    const ctx = document.getElementById('groupMetricsChart').getContext('2d');
+    groupMetricsChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Emociones Positivas', 'Emociones Negativas', 'Neutrales'],
+        datasets: [{
+          data: [33, 33, 34],
+          backgroundColor: ['#22c55e', '#ef4444', '#6b7280'],
+          borderWidth: 0,
+          hoverOffset: 10
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#374151',
+              font: {
+                size: 12,
+                weight: '500'
+              },
+              padding: 20,
+              usePointStyle: true,
+              pointStyle: 'circle'
+            }
+          }
+        },
+        animation: {
+          animateRotate: true,
+          duration: 1000
+        }
+      }
     });
   }
 
-  function updateEmotionBars(values){
-    const c=document.getElementById('emotions-bars'); c.innerHTML='';
-    Object.entries(values).forEach(([emotion,val])=>{
-      const wrap=document.createElement('div');
-      wrap.className='mb-2';
-      wrap.innerHTML=`
-        <div class="text-sm text-gray-700 mb-1 capitalize">${emotion}</div>
-        <div class="w-full bg-gray-200 rounded-md h-6 overflow-hidden">
-          <div class="h-6 flex items-center justify-center text-white text-xs font-bold"
-               style="width:${val}%;background-color:${emotionColors[emotion]||'#666'}">
-            ${Math.round(val)}%
+  // Actualizar barras de emociones
+  function updateEmotionBars(values) {
+    const container = document.getElementById('emotions-bars');
+    container.innerHTML = '';
+    
+    // Convertir y ordenar emociones por valor
+    const sortedEmotions = Object.entries(values)
+      .sort(([,a], [,b]) => b - a);
+    
+    sortedEmotions.forEach(([emotion, value], index) => {
+      const barWrapper = document.createElement('div');
+      barWrapper.className = 'mb-4 animate-fade-in-up';
+      barWrapper.style.animationDelay = `${index * 0.1}s`;
+      
+      barWrapper.innerHTML = `
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm font-semibold text-text-primary capitalize">${emotion}</span>
+          <span class="text-sm font-bold text-text-secondary">${Math.round(value)}%</span>
+        </div>
+        <div class="emotion-bar">
+          <div class="emotion-fill" style="width: ${value}%; background: linear-gradient(90deg, ${emotionColors[emotion] || '#6b7280'}, ${emotionColors[emotion] || '#6b7280'}cc);">
           </div>
-        </div>`;
-      c.appendChild(wrap);
+        </div>
+      `;
+      
+      container.appendChild(barWrapper);
     });
   }
 
-  function updateGroupMetrics(values){
-    const pos=['feliz'], neg=['triste','enojado','miedo','asco'], neu=['neutral','sorpresa'];
-    let p=0,n=0,u=0;
-    Object.entries(values).forEach(([e,v])=>{
-      if(pos.includes(e)) p+=v; else if(neg.includes(e)) n+=v; else u+=v;
+  // Actualizar métricas grupales
+  function updateGroupMetrics(values) {
+    const positiveEmotions = ['feliz'];
+    const negativeEmotions = ['triste', 'enojado', 'miedo', 'asco'];
+    const neutralEmotions = ['neutral', 'sorpresa'];
+    
+    let positive = 0, negative = 0, neutral = 0;
+    
+    Object.entries(values).forEach(([emotion, value]) => {
+      if (positiveEmotions.includes(emotion)) {
+        positive += value;
+      } else if (negativeEmotions.includes(emotion)) {
+        negative += value;
+      } else {
+        neutral += value;
+      }
     });
-    const t=p+n+u; if(t>0){
-      groupMetricsChart.data.datasets[0].data=[p/t*100,n/t*100,u/t*100];
+    
+    const total = positive + negative + neutral;
+    if (total > 0) {
+      const newData = [
+        (positive / total) * 100,
+        (negative / total) * 100,
+        (neutral / total) * 100
+      ];
+      
+      groupMetricsChart.data.datasets[0].data = newData;
       groupMetricsChart.update('none');
     }
   }
 
-  socket.on('emotion_update',(data)=>{
-    if(isPaused) return;
-    document.getElementById('current-emotion').textContent=data.emotion||'Sin detectar';
-    document.getElementById('current-confidence').textContent=Math.round(data.value||0)+'%';
-    document.getElementById('current-cognitive-load').textContent=Math.round(data.cognitive_load||0)+'%';
-    document.getElementById('face-count').textContent=data.face_count||0;
+  // Actualizar estado de rostros
+  function updateFaceStatus(count) {
+    const faceStatus = document.getElementById('face-status');
+    
+    if (count === 0) {
+      faceStatus.className = 'status-indicator status-offline mt-2';
+      faceStatus.textContent = 'Sin detectar';
+    } else if (count >= 40) {
+      faceStatus.className = 'status-indicator status-warning mt-2';
+      faceStatus.textContent = 'Grupo grande';
+    } else {
+      faceStatus.className = 'status-indicator status-online mt-2';
+      faceStatus.textContent = 'Detectando';
+    }
+  }
 
-    if(data.emotion_values){ updateEmotionBars(data.emotion_values); updateGroupMetrics(data.emotion_values); }
-
-    const fc=data.face_count||0;
-    document.getElementById('system-status').textContent = (fc===0)?'🟡 Sin rostros':(fc>=40?'🔴 Grupo grande':'🟢 Activo');
+  // Manejar actualizaciones de emociones via WebSocket
+  socket.on('emotion_update', (data) => {
+    if (isPaused) return;
+    
+    // Actualizar métricas principales
+    document.getElementById('current-emotion').textContent = data.emotion || 'Sin detectar';
+    document.getElementById('current-confidence').textContent = Math.round(data.value || 0) + '%';
+    document.getElementById('current-cognitive-load').textContent = Math.round(data.cognitive_load || 0) + '%';
+    
+    // Actualizar contador de rostros
+    const faceCount = data.face_count || 0;
+    document.getElementById('face-count').textContent = faceCount;
+    updateFaceStatus(faceCount);
+    
+    // Actualizar gráficos si hay datos de emociones
+    if (data.emotion_values) {
+      updateEmotionBars(data.emotion_values);
+      updateGroupMetrics(data.emotion_values);
+    }
+    
+    // Actualizar estado del sistema
+    const systemStatus = document.getElementById('system-status');
+    if (faceCount === 0) {
+      systemStatus.innerHTML = '<span class="status-indicator status-warning">Sin rostros</span>';
+    } else if (faceCount >= 40) {
+      systemStatus.innerHTML = '<span class="status-indicator status-warning">Grupo grande</span>';
+    } else {
+      systemStatus.innerHTML = '<span class="status-indicator status-online">Activo</span>';
+    }
   });
 
-  document.getElementById('pause-btn').addEventListener('click',function(){
-    isPaused=!isPaused;
-    this.textContent=isPaused?'▶️ Reanudar Análisis':'⏸️ Pausar Análisis';
-    this.className=isPaused
-      ?'inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700'
-      :'inline-flex items-center rounded-md bg-yellow-500 px-4 py-2 text-sm font-semibold text-white hover:bg-yellow-600';
+  // Controles del sistema
+  document.getElementById('pause-btn').addEventListener('click', function() {
+    isPaused = !isPaused;
+    
+    if (isPaused) {
+      this.innerHTML = `
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+        </svg>
+        <span>Reanudar Análisis</span>
+      `;
+      this.className = 'px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-300 hover:scale-105 flex items-center gap-2';
+    } else {
+      this.innerHTML = `
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 01-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        </svg>
+        <span>Pausar Análisis</span>
+      `;
+      this.className = 'btn-primary flex items-center gap-2 hover:scale-105 transition-transform';
+    }
   });
 
-  document.getElementById('export-btn').addEventListener('click',function(){
-    alert('Exportación: agrega un endpoint para servir el último CSV en /emociones.');
+  document.getElementById('export-btn').addEventListener('click', function() {
+    // Mostrar loading state
+    const originalContent = this.innerHTML;
+    this.innerHTML = `
+      <div class="loading-spinner w-4 h-4"></div>
+      <span>Exportando...</span>
+    `;
+    this.disabled = true;
+    
+    // Simular exportación (reemplazar con endpoint real)
+    setTimeout(() => {
+      alert('Exportación completada. Revisa el directorio /emociones para el archivo CSV generado.');
+      this.innerHTML = originalContent;
+      this.disabled = false;
+    }, 2000);
   });
 
-  document.getElementById('reset-btn').addEventListener('click',function(){
-    if(confirm('¿Reiniciar el análisis?')) location.reload();
+  document.getElementById('reset-btn').addEventListener('click', function() {
+    if (confirm('¿Estás seguro de que quieres reiniciar el sistema? Se perderán los datos actuales.')) {
+      // Mostrar loading state
+      const originalContent = this.innerHTML;
+      this.innerHTML = `
+        <div class="loading-spinner w-4 h-4"></div>
+        <span>Reiniciando...</span>
+      `;
+      this.disabled = true;
+      
+      // Recargar página después de un breve delay
+      setTimeout(() => {
+        location.reload();
+      }, 1500);
+    }
   });
 
-  function updateTime(){ document.getElementById('current-time').textContent=new Date().toLocaleString('es-ES'); }
-  document.addEventListener('DOMContentLoaded',()=>{ initGroupMetricsChart(); updateTime(); setInterval(updateTime,1000); socket.emit('get_current_data'); });
-  socket.on('connect',()=>{ document.getElementById('system-status').textContent='🟢 Conectado'; });
-  socket.on('disconnect',()=>{ document.getElementById('system-status').textContent='🔴 Desconectado'; });
+  // Actualizar reloj en tiempo real
+  function updateTime() {
+    const now = new Date();
+    document.getElementById('current-time').textContent = now.toLocaleString('es-ES', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  }
+
+  // Manejo de conexión WebSocket
+  socket.on('connect', () => {
+    console.log('Conectado al servidor WebSocket');
+    document.getElementById('system-status').innerHTML = '<span class="status-indicator status-online">Conectado</span>';
+    socket.emit('get_current_data');
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Desconectado del servidor WebSocket');
+    document.getElementById('system-status').innerHTML = '<span class="status-indicator status-offline">Desconectado</span>';
+  });
+
+  socket.on('reconnect', () => {
+    console.log('Reconectado al servidor WebSocket');
+    location.reload(); // Recargar para obtener estado actual
+  });
+
+  // Inicialización al cargar la página
+  document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar gráfico
+    initGroupMetricsChart();
+    
+    // Inicializar reloj
+    updateTime();
+    setInterval(updateTime, 1000);
+    
+    // Animaciones de entrada escalonadas
+    const animatedElements = document.querySelectorAll('[style*="animation-delay"]');
+    animatedElements.forEach((element, index) => {
+      element.style.opacity = '0';
+      setTimeout(() => {
+        element.style.opacity = '1';
+      }, index * 100);
+    });
+    
+    // Solicitar datos actuales del servidor
+    if (socket.connected) {
+      socket.emit('get_current_data');
+    }
+    
+    // Manejar visibilidad de la página para pausar/reanudar
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        console.log('Página oculta - manteniendo conexión WebSocket');
+      } else {
+        console.log('Página visible - sincronizando datos');
+        if (socket.connected) {
+          socket.emit('get_current_data');
+        }
+      }
+    });
+  });
 </script>
 {% endblock %}

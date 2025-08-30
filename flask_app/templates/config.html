@@ -2,169 +2,388 @@
 {% block title %}Configuración — Emoticlass{% endblock %}
 
 {% block content %}
-<!-- Encabezado -->
-<div class="mb-4 flex items-center justify-between">
-  <h1 class="text-xl font-semibold text-white">Configuración</h1>
-  <a href="{{ url_for('core.dashboard') }}" class="btn-secondary">← Volver al dashboard</a>
+<!-- Encabezado con animación -->
+<div class="mb-6 flex items-center justify-between animate-fade-in-up">
+  <div>
+    <h1 class="text-3xl font-bold text-gradient mb-2">Configuración del Sistema</h1>
+    <p class="text-text-secondary">Configura tu cámara y parámetros académicos para comenzar</p>
+  </div>
+  <a href="{{ url_for('core.dashboard') }}" class="btn-secondary hover-lift">
+    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+    </svg>
+    Volver al Dashboard
+  </a>
 </div>
 
-<div class="grid gap-6 md:grid-cols-2">
+<div class="grid gap-6 lg:grid-cols-2">
   <!-- Configuración de Cámara -->
-  <section class="card-lemac p-5">
-    <h2 class="section-title mb-4">Configuración de cámara</h2>
-    <form method="POST" action="{{ url_for('core.config') }}" class="space-y-4">
+  <section class="card-lemac hover-lift animate-fade-in-left" style="animation-delay: 0.1s;">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-primary-teal to-secondary-blue flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+        </svg>
+      </div>
       <div>
-        <label for="camera" class="block text-sm font-medium text-gray-700 mb-1">Seleccionar cámara</label>
-        <select id="camera" name="camera" required
-          class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-          {% for cam in cameras %}
-            <option value="{{ cam }}" {% if cam == current_camera_index %}selected{% endif %}>Cámara {{ cam }}</option>
-          {% endfor %}
-        </select>
+        <h2 class="text-xl font-bold text-text-primary">Configuración de Cámara</h2>
+        <p class="text-sm text-text-secondary">Selecciona y configura tu dispositivo de video</p>
+      </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('core.config') }}" class="space-y-5">
+      <div>
+        <label for="camera" class="block text-sm font-semibold text-text-primary mb-2">
+          Seleccionar Cámara
+          <span class="text-primary-teal">*</span>
+        </label>
+        <div class="relative">
+          <select id="camera" name="camera" required class="form-input appearance-none pr-10">
+            {% for cam in cameras %}
+              <option value="{{ cam }}" {% if cam == current_camera_index %}selected{% endif %}>
+                Cámara {{ cam }}
+              </option>
+            {% endfor %}
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+            <svg class="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
       </div>
 
       <div>
-        <label for="resolution" class="block text-sm font-medium text-gray-700 mb-1">Resolución</label>
-        <select id="resolution" name="resolution" required
-          class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-          {% for res in resolutions %}
-            <option value="{{ res }}" {% if res == current_resolution %}selected{% endif %}>{{ res }}</option>
-          {% endfor %}
-        </select>
-        <small class="text-gray-500 text-xs">Sugerido: 640×480 para equipos modestos.</small>
+        <label for="resolution" class="block text-sm font-semibold text-text-primary mb-2">
+          Resolución de Video
+          <span class="text-primary-teal">*</span>
+        </label>
+        <div class="relative">
+          <select id="resolution" name="resolution" required class="form-input appearance-none pr-10">
+            {% for res in resolutions %}
+              <option value="{{ res }}" {% if res == current_resolution %}selected{% endif %}>
+                {{ res }}
+              </option>
+            {% endfor %}
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+            <svg class="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 flex items-center gap-2 text-sm text-text-light">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+          </svg>
+          <span>Recomendado: 640×480 para equipos con recursos limitados</span>
+        </div>
       </div>
 
       <div class="pt-2">
-        <button type="submit" name="configurar_camara" class="btn-primary">Configurar cámara</button>
+        <button type="submit" name="configurar_camara" class="btn-primary w-full">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          Configurar Cámara
+        </button>
       </div>
     </form>
   </section>
 
-  <!-- Vista previa -->
-  <section class="card-lemac p-5">
-    <h2 class="section-title mb-4">Vista previa</h2>
-    <div class="aspect-video w-full overflow-hidden rounded-lg bg-gray-100 flex items-center justify-center">
+  <!-- Vista previa de la cámara -->
+  <section class="card-lemac hover-lift animate-fade-in-right" style="animation-delay: 0.2s;">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-secondary-blue to-accent-purple flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-text-primary">Vista Previa</h2>
+        <p class="text-sm text-text-secondary">Visualiza el feed de tu cámara en tiempo real</p>
+      </div>
+    </div>
+
+    <div class="video-container">
       {% if camera_configured %}
-        <img src="{{ url_for('core.video_feed') }}" alt="Vista previa de la cámara" class="w-full h-full object-cover">
+        <img src="{{ url_for('core.video_feed') }}" alt="Vista previa de la cámara" class="video-feed">
+        <div class="video-overlay">
+          <div class="flex items-center justify-between">
+            <span class="status-indicator status-online">
+              <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              En Vivo
+            </span>
+            <span class="text-sm font-medium">{{ current_resolution }}</span>
+          </div>
+        </div>
       {% else %}
-        <div class="text-center text-gray-500 space-y-2">
-          <div class="text-4xl">📹</div>
-          <p>Selecciona una cámara para ver la vista previa</p>
+        <div class="aspect-video w-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+          <div class="text-center space-y-4">
+            <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-primary-teal to-secondary-blue flex items-center justify-center">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="font-medium text-text-primary">Cámara no configurada</p>
+              <p class="text-sm text-text-secondary">Selecciona una cámara para ver la vista previa</p>
+            </div>
+          </div>
         </div>
       {% endif %}
     </div>
 
     {% if camera_configured %}
-      <div class="mt-4 rounded-md border border-green-200 bg-green-50 p-3 text-green-800">
-        <p class="font-medium">✅ Cámara configurada correctamente</p>
-        <p class="text-sm">Resolución actual: {{ current_resolution }}</p>
+      <div class="flash-message flash-success mt-4">
+        <div class="flex items-center gap-3">
+          <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+          </svg>
+          <div>
+            <p class="font-semibold">Cámara configurada correctamente</p>
+            <p class="text-sm opacity-90">Resolución actual: {{ current_resolution }}</p>
+          </div>
+        </div>
       </div>
     {% endif %}
   </section>
 </div>
 
 <!-- Configuración Académica -->
-<section class="card-lemac p-5 mt-6">
-  <h2 class="section-title mb-4">Configuración académica</h2>
-  <form method="POST" id="academicForm" action="{{ url_for('core.config') }}" class="space-y-4">
-    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <div>
-        <label for="nivel_ensenanza" class="block text-sm font-medium text-gray-700 mb-1">Nivel de enseñanza</label>
-        <select id="nivel_ensenanza" name="nivel_ensenanza" required onchange="updateGrados()"
-          class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-          <option value="">Seleccionar nivel...</option>
-          <option value="pre-basica" {% if academic_config.get('nivel_ensenanza') == 'pre-basica' %}selected{% endif %}>Pre-básica</option>
-          <option value="basica" {% if academic_config.get('nivel_ensenanza') == 'basica' %}selected{% endif %}>Básica</option>
-          <option value="media" {% if academic_config.get('nivel_ensenanza') == 'media' %}selected{% endif %}>Media</option>
-        </select>
+<section class="card-lemac hover-lift mt-6 animate-fade-in-up" style="animation-delay: 0.3s;">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-accent-purple to-primary-teal flex items-center justify-center">
+      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+      </svg>
+    </div>
+    <div>
+      <h2 class="text-xl font-bold text-text-primary">Configuración Académica</h2>
+      <p class="text-sm text-text-secondary">Define el contexto educativo para el análisis</p>
+    </div>
+  </div>
+
+  <form method="POST" id="academicForm" action="{{ url_for('core.config') }}" class="space-y-6">
+    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      <!-- Nivel de Enseñanza -->
+      <div class="animate-fade-in-left" style="animation-delay: 0.4s;">
+        <label for="nivel_ensenanza" class="block text-sm font-semibold text-text-primary mb-2">
+          Nivel de Enseñanza
+          <span class="text-primary-teal">*</span>
+        </label>
+        <div class="relative">
+          <select id="nivel_ensenanza" name="nivel_ensenanza" required onchange="updateGrados()"
+            class="form-input appearance-none pr-10">
+            <option value="">Seleccionar nivel...</option>
+            <option value="pre-basica" {% if academic_config.get('nivel_ensenanza') == 'pre-basica' %}selected{% endif %}>Pre-básica</option>
+            <option value="basica" {% if academic_config.get('nivel_ensenanza') == 'basica' %}selected{% endif %}>Básica</option>
+            <option value="media" {% if academic_config.get('nivel_ensenanza') == 'media' %}selected{% endif %}>Media</option>
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+            <svg class="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
       </div>
 
-      <div>
-        <label for="grado" class="block text-sm font-medium text-gray-700 mb-1">Grado</label>
-        <select id="grado" name="grado" required {% if not academic_config.get('nivel_ensenanza') %}disabled{% endif %}
-          class="w-full rounded-md border-gray-300 disabled:bg-gray-100 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-          <option value="">Seleccionar grado...</option>
-        </select>
+      <!-- Grado -->
+      <div class="animate-fade-in-right" style="animation-delay: 0.5s;">
+        <label for="grado" class="block text-sm font-semibold text-text-primary mb-2">
+          Grado
+          <span class="text-primary-teal">*</span>
+        </label>
+        <div class="relative">
+          <select id="grado" name="grado" required {% if not academic_config.get('nivel_ensenanza') %}disabled{% endif %}
+            class="form-input appearance-none pr-10 disabled:bg-gray-100 disabled:text-gray-500">
+            <option value="">Seleccionar grado...</option>
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+            <svg class="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
       </div>
 
-      <div>
-        <label for="materia" class="block text-sm font-medium text-gray-700 mb-1">Materia</label>
-        <select id="materia" name="materia" required
-          class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-          <option value="">Seleccionar materia...</option>
-          <option value="musica"     {% if academic_config.get('materia') == 'musica' %}selected{% endif %}>Música</option>
-          <option value="filosofia"  {% if academic_config.get('materia') == 'filosofia' %}selected{% endif %}>Filosofía</option>
-          <option value="matematicas"{% if academic_config.get('materia') == 'matematicas' %}selected{% endif %}>Matemáticas</option>
-          <option value="lenguaje"   {% if academic_config.get('materia') == 'lenguaje' %}selected{% endif %}>Lenguaje</option>
-          <option value="quimica"    {% if academic_config.get('materia') == 'quimica' %}selected{% endif %}>Química</option>
-          <option value="biologia"   {% if academic_config.get('materia') == 'biologia' %}selected{% endif %}>Biología</option>
-          <option value="historia"   {% if academic_config.get('materia') == 'historia' %}selected{% endif %}>Historia</option>
-          <option value="religion"   {% if academic_config.get('materia') == 'religion' %}selected{% endif %}>Religión</option>
-        </select>
+      <!-- Materia -->
+      <div class="animate-fade-in-left" style="animation-delay: 0.6s;">
+        <label for="materia" class="block text-sm font-semibold text-text-primary mb-2">
+          Materia
+          <span class="text-primary-teal">*</span>
+        </label>
+        <div class="relative">
+          <select id="materia" name="materia" required class="form-input appearance-none pr-10">
+            <option value="">Seleccionar materia...</option>
+            <option value="musica"     {% if academic_config.get('materia') == 'musica' %}selected{% endif %}>Música</option>
+            <option value="filosofia"  {% if academic_config.get('materia') == 'filosofia' %}selected{% endif %}>Filosofía</option>
+            <option value="matematicas"{% if academic_config.get('materia') == 'matematicas' %}selected{% endif %}>Matemáticas</option>
+            <option value="lenguaje"   {% if academic_config.get('materia') == 'lenguaje' %}selected{% endif %}>Lenguaje</option>
+            <option value="quimica"    {% if academic_config.get('materia') == 'quimica' %}selected{% endif %}>Química</option>
+            <option value="biologia"   {% if academic_config.get('materia') == 'biologia' %}selected{% endif %}>Biología</option>
+            <option value="historia"   {% if academic_config.get('materia') == 'historia' %}selected{% endif %}>Historia</option>
+            <option value="religion"   {% if academic_config.get('materia') == 'religion' %}selected{% endif %}>Religión</option>
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+            <svg class="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
       </div>
 
-      <div>
-        <label for="temperatura" class="block text-sm font-medium text-gray-700 mb-1">Temperatura Valparaíso</label>
-        <input type="text" id="temperatura" name="temperatura" readonly
-          value="{{ temperatura if temperatura else 'Cargando...' }}"
-          class="w-full rounded-md border-gray-300 bg-gray-100 text-gray-700">
-        <small class="text-gray-500 text-xs">Se actualiza automáticamente</small>
+      <!-- Temperatura -->
+      <div class="animate-fade-in-right" style="animation-delay: 0.7s;">
+        <label for="temperatura" class="block text-sm font-semibold text-text-primary mb-2">
+          Temperatura Valparaíso
+          <div class="inline-flex items-center ml-1">
+            <svg class="w-3 h-3 text-text-light" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a3.002 3.002 0 000 5.797V17a1 1 0 11-2 0v-6.101a3.002 3.002 0 000-5.797V3a1 1 0 011-1zm0 4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"></path>
+              <path d="M15.707 6.293a1 1 0 010 1.414l-3 3a1 1 0 01-1.414 0l-1.5-1.5a1 1 0 111.414-1.414L12 8.586l2.293-2.293a1 1 0 011.414 0z"></path>
+            </svg>
+          </div>
+        </label>
+        <div class="relative">
+          <input type="text" id="temperatura" name="temperatura" readonly
+            value="{{ temperatura if temperatura else 'Cargando...' }}"
+            class="form-input bg-gray-50 text-text-secondary">
+          <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+            <div id="temp-loading" class="loading-spinner w-4 h-4 hidden"></div>
+            <svg id="temp-icon" class="w-5 h-5 text-primary-teal" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a3.002 3.002 0 000 5.797V17a1 1 0 11-2 0v-6.101a3.002 3.002 0 000-5.797V3a1 1 0 011-1zm0 4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="mt-1 text-xs text-text-light flex items-center gap-1">
+          <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span>Actualización automática cada 30s</span>
+        </div>
       </div>
     </div>
 
-    <div class="pt-2">
-      <button type="submit" name="configurar_academica" class="btn-primary">Guardar configuración académica</button>
+    <div class="pt-4">
+      <button type="submit" name="configurar_academica" class="btn-primary w-full md:w-auto">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+        </svg>
+        Guardar Configuración Académica
+      </button>
     </div>
   </form>
 
-  {% if academic_configured and camera_configured %}
-    <div class="mt-4 rounded-md border border-teal-200 bg-teal-50 p-3 text-teal-800">
-      <h4 class="font-semibold">✅ Configuración Completa</h4>
-      <p class="text-sm">
-        <strong>Cámara:</strong> Configurada |
-        <strong>Nivel:</strong> {{ academic_config.get('nivel_ensenanza', '').title() }} |
-        <strong>Grado:</strong> {{ academic_config.get('grado', '').replace('_', ' ').title() }} |
-        <strong>Materia:</strong> {{ academic_config.get('materia', '').title() }}
-      </p>
-    </div>
-  {% else %}
-    <div class="mt-4 rounded-md border border-yellow-200 bg-yellow-50 p-3 text-yellow-800">
-      <h4 class="font-semibold">⚠️ Configuración incompleta</h4>
-      <p class="text-sm">
-        {% if not camera_configured %}Debes configurar la cámara antes de continuar al dashboard.<br>{% endif %}
-        {% if not academic_configured %}Debes completar la configuración académica antes de continuar.<br>{% endif %}
-      </p>
-    </div>
-  {% endif %}
+  <!-- Estado de configuración -->
+  <div class="mt-6">
+    {% if academic_configured and camera_configured %}
+      <div class="flash-message flash-success">
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+          </svg>
+          <div class="flex-1">
+            <h4 class="font-bold">Configuración Completa</h4>
+            <div class="text-sm opacity-90 mt-1">
+              <span class="font-medium">Cámara:</span> Configurada | 
+              <span class="font-medium">Nivel:</span> {{ academic_config.get('nivel_ensenanza', '').replace('-', ' ').title() }} | 
+              <span class="font-medium">Grado:</span> {{ academic_config.get('grado', '').replace('-', ' ').replace('_', ' ').title() }} | 
+              <span class="font-medium">Materia:</span> {{ academic_config.get('materia', '').title() }}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="flash-message flash-warning">
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+          </svg>
+          <div class="flex-1">
+            <h4 class="font-bold">Configuración Incompleta</h4>
+            <div class="text-sm opacity-90 mt-1 space-y-1">
+              {% if not camera_configured %}
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span>Configura la cámara para continuar</span>
+                </div>
+              {% endif %}
+              {% if not academic_configured %}
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span>Completa la configuración académica</span>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
 </section>
 
+<!-- Botón de acceso al Dashboard -->
 {% if camera_configured and academic_configured %}
-  <div class="text-center mt-6">
-    <a href="{{ url_for('core.dashboard') }}" class="btn-primary inline-flex w-auto">
-      🚀 Ir al Dashboard
+  <div class="text-center mt-8 animate-fade-in-up" style="animation-delay: 0.8s;">
+    <a href="{{ url_for('core.dashboard') }}" class="btn-primary inline-flex items-center gap-3 px-8 py-4 text-lg hover:scale-105 transform transition-all duration-300">
+      <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </div>
+      <span>Ir al Dashboard</span>
     </a>
   </div>
 {% endif %}
 
-<!-- Instrucciones -->
-<section class="card-lemac p-5 mt-6">
-  <h2 class="section-title mb-4">Instrucciones</h2>
+<!-- Guía de Instrucciones -->
+<section class="card-lemac mt-8 animate-fade-in-up" style="animation-delay: 0.9s;">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
+      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+    </div>
+    <div>
+      <h2 class="text-xl font-bold text-text-primary">Guía de Configuración</h2>
+      <p class="text-sm text-text-secondary">Sigue estos pasos para completar la configuración</p>
+    </div>
+  </div>
+
   <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-    <div class="rounded-lg border border-gray-200 p-4">
-      <h4 class="font-semibold text-gray-800">Paso 1</h4>
-      <p class="text-sm text-gray-600">Selecciona la cámara que deseas utilizar para el análisis de emociones.</p>
+    <div class="metric-card bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:from-blue-100 hover:to-blue-150 transition-all duration-300">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm">1</div>
+        <h4 class="font-bold text-blue-800">Configurar Cámara</h4>
+      </div>
+      <p class="text-sm text-blue-700">Selecciona la cámara que deseas utilizar para el análisis de emociones en tiempo real.</p>
     </div>
-    <div class="rounded-lg border border-gray-200 p-4">
-      <h4 class="font-semibold text-gray-800">Paso 2</h4>
-      <p class="text-sm text-gray-600">Elige la resolución adecuada según tu hardware y necesidades.</p>
+
+    <div class="metric-card bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:from-green-100 hover:to-green-150 transition-all duration-300">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center font-bold text-sm">2</div>
+        <h4 class="font-bold text-green-800">Ajustar Resolución</h4>
+      </div>
+      <p class="text-sm text-green-700">Elige la resolución adecuada según las capacidades de tu hardware y red.</p>
     </div>
-    <div class="rounded-lg border border-gray-200 p-4">
-      <h4 class="font-semibold text-gray-800">Paso 3</h4>
-      <p class="text-sm text-gray-600">Configura el nivel de enseñanza, grado y materia para contextualizar los datos.</p>
+
+    <div class="metric-card bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:from-purple-100 hover:to-purple-150 transition-all duration-300">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center font-bold text-sm">3</div>
+        <h4 class="font-bold text-purple-800">Contexto Académico</h4>
+      </div>
+      <p class="text-sm text-purple-700">Configura el nivel, grado y materia para contextualizar los datos emocionales.</p>
     </div>
-    <div class="rounded-lg border border-gray-200 p-4">
-      <h4 class="font-semibold text-gray-800">Paso 4</h4>
-      <p class="text-sm text-gray-600">Haz clic en “Ir al Dashboard” para comenzar el análisis en tiempo real.</p>
+
+    <div class="metric-card bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 hover:from-teal-100 hover:to-teal-150 transition-all duration-300">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-8 h-8 rounded-full bg-teal-500 text-white flex items-center justify-center font-bold text-sm">4</div>
+        <h4 class="font-bold text-teal-800">Comenzar Análisis</h4>
+      </div>
+      <p class="text-sm text-teal-700">Haz clic en "Ir al Dashboard" para iniciar el análisis emocional en tiempo real.</p>
     </div>
   </div>
 </section>
@@ -172,55 +391,174 @@
 
 {% block scripts %}
 <script>
+  // Configuración de grados por nivel educativo
   const gradosPorNivel = {
-    'pre-basica': [{ value:'prekinder', text:'Pre-Kinder' }, { value:'kinder', text:'Kinder' }],
+    'pre-basica': [
+      { value: 'prekinder', text: 'Pre-Kinder' }, 
+      { value: 'kinder', text: 'Kinder' }
+    ],
     'basica': [
-      { value:'1-basico', text:'1° Básico' }, { value:'2-basico', text:'2° Básico' },
-      { value:'3-basico', text:'3° Básico' }, { value:'4-basico', text:'4° Básico' },
-      { value:'5-basico', text:'5° Básico' }, { value:'6-basico', text:'6° Básico' },
-      { value:'7-basico', text:'7° Básico' }, { value:'8-basico', text:'8° Básico' }
+      { value: '1-basico', text: '1° Básico' }, { value: '2-basico', text: '2° Básico' },
+      { value: '3-basico', text: '3° Básico' }, { value: '4-basico', text: '4° Básico' },
+      { value: '5-basico', text: '5° Básico' }, { value: '6-basico', text: '6° Básico' },
+      { value: '7-basico', text: '7° Básico' }, { value: '8-basico', text: '8° Básico' }
     ],
     'media': [
-      { value:'1-medio', text:'1° Medio' }, { value:'2-medio', text:'2° Medio' },
-      { value:'3-medio', text:'3° Medio' }, { value:'4-medio', text:'4° Medio' }
+      { value: '1-medio', text: '1° Medio' }, { value: '2-medio', text: '2° Medio' },
+      { value: '3-medio', text: '3° Medio' }, { value: '4-medio', text: '4° Medio' }
     ]
   };
 
-  function updateGrados(){
+  // Actualizar opciones de grado según el nivel seleccionado
+  function updateGrados() {
     const nivelSelect = document.getElementById('nivel_ensenanza');
     const gradoSelect = document.getElementById('grado');
     const selectedNivel = nivelSelect.value;
     const currentGrado = "{{ academic_config.get('grado', '') }}";
 
+    // Limpiar opciones existentes
     gradoSelect.innerHTML = '<option value="">Seleccionar grado...</option>';
-    if(selectedNivel && gradosPorNivel[selectedNivel]){
+    
+    if (selectedNivel && gradosPorNivel[selectedNivel]) {
+      // Habilitar el select y agregar opciones
       gradoSelect.disabled = false;
-      gradosPorNivel[selectedNivel].forEach(g=>{
-        const opt = document.createElement('option');
-        opt.value = g.value; opt.textContent = g.text;
-        if(g.value === currentGrado) opt.selected = true;
-        gradoSelect.appendChild(opt);
+      gradoSelect.classList.remove('disabled:bg-gray-100', 'disabled:text-gray-500');
+      
+      gradosPorNivel[selectedNivel].forEach(grado => {
+        const option = document.createElement('option');
+        option.value = grado.value;
+        option.textContent = grado.text;
+        if (grado.value === currentGrado) {
+          option.selected = true;
+        }
+        gradoSelect.appendChild(option);
       });
     } else {
+      // Deshabilitar el select
       gradoSelect.disabled = true;
+      gradoSelect.classList.add('disabled:bg-gray-100', 'disabled:text-gray-500');
     }
   }
 
-  document.addEventListener('DOMContentLoaded', function(){
-    const nivelSelect = document.getElementById('nivel_ensenanza');
-    if(nivelSelect.value){ updateGrados(); }
+  // Actualizar temperatura desde la API
+  function updateTemperature() {
+    const tempInput = document.getElementById('temperatura');
+    const tempIcon = document.getElementById('temp-icon');
+    const tempLoading = document.getElementById('temp-loading');
+    
+    // Mostrar indicador de carga
+    tempIcon.classList.add('hidden');
+    tempLoading.classList.remove('hidden');
+    
+    fetch('{{ url_for("core.get_temperature_api") }}')
+      .then(response => response.json())
+      .then(data => {
+        if (data.temperature !== undefined) {
+          tempInput.value = data.temperature + '°C';
+          // Agregar efecto de actualización
+          tempInput.classList.add('border-green-400');
+          setTimeout(() => {
+            tempInput.classList.remove('border-green-400');
+          }, 1000);
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener temperatura:', error);
+        tempInput.value = 'Error al cargar';
+      })
+      .finally(() => {
+        // Ocultar indicador de carga
+        tempLoading.classList.add('hidden');
+        tempIcon.classList.remove('hidden');
+      });
+  }
 
-    setInterval(()=>{
-      fetch('{{ url_for("core.get_temperature_api") }}')
-        .then(r=>r.json())
-        .then(data=>{
-          const tempInput = document.getElementById('temperatura');
-          if(tempInput && data.temperature !== undefined){
-            tempInput.value = data.temperature + '°C';
-          }
-        })
-        .catch(err=>console.error('Error al obtener temperatura:', err));
-    }, 30000);
+  // Animaciones de carga para formularios
+  function addFormLoadingState(form) {
+    form.addEventListener('submit', function(e) {
+      const submitButton = form.querySelector('button[type="submit"]');
+      if (submitButton) {
+        const originalContent = submitButton.innerHTML;
+        submitButton.innerHTML = `
+          <div class="flex items-center justify-center gap-2">
+            <div class="loading-spinner"></div>
+            <span>Guardando...</span>
+          </div>
+        `;
+        submitButton.disabled = true;
+        
+        // Restaurar después de un tiempo en caso de error
+        setTimeout(() => {
+          submitButton.innerHTML = originalContent;
+          submitButton.disabled = false;
+        }, 8000);
+      }
+    });
+  }
+
+  // Efectos visuales para selects
+  function addSelectEffects() {
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+      select.addEventListener('focus', function() {
+        this.parentNode.classList.add('transform', 'scale-[1.02]');
+      });
+      
+      select.addEventListener('blur', function() {
+        this.parentNode.classList.remove('transform', 'scale-[1.02]');
+      });
+      
+      select.addEventListener('change', function() {
+        // Efecto de pulso al cambiar
+        this.classList.add('border-primary-teal');
+        setTimeout(() => {
+          this.classList.remove('border-primary-teal');
+        }, 500);
+      });
+    });
+  }
+
+  // Inicialización
+  document.addEventListener('DOMContentLoaded', function() {
+    // Configurar grados si hay un nivel preseleccionado
+    const nivelSelect = document.getElementById('nivel_ensenanza');
+    if (nivelSelect.value) {
+      updateGrados();
+    }
+    
+    // Configurar actualización automática de temperatura
+    updateTemperature(); // Actualizar inmediatamente
+    setInterval(updateTemperature, 30000); // Cada 30 segundos
+    
+    // Agregar efectos a los formularios
+    const forms = document.querySelectorAll('form');
+    forms.forEach(addFormLoadingState);
+    
+    // Agregar efectos a los selects
+    addSelectEffects();
+    
+    // Animaciones de entrada escalonadas
+    const animatedElements = document.querySelectorAll('[style*="animation-delay"]');
+    animatedElements.forEach((element, index) => {
+      element.style.opacity = '0';
+      setTimeout(() => {
+        element.style.opacity = '1';
+      }, index * 100);
+    });
+    
+    // Efecto de hover en las tarjetas de instrucciones
+    const instructionCards = document.querySelectorAll('.metric-card');
+    instructionCards.forEach((card, index) => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-8px) scale(1.02)';
+        this.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+        this.style.boxShadow = '';
+      });
+    });
   });
 </script>
 {% endblock %}

@@ -2,66 +2,242 @@
 {% block title %}Registro — Emoticlass{% endblock %}
 
 {% block content %}
-<div class="min-h-[70vh] flex items-center justify-center">
-  <div class="w-full max-w-lg bg-white shadow-xl rounded-2xl p-6">
-    <h1 class="text-xl font-semibold text-gray-800 text-center mb-4">Crear Cuenta</h1>
-
-    {% if error %}
-      <div class="mb-3 rounded-md border border-red-200 bg-red-50 p-3 text-red-800 text-sm">
-        {{ error }}
-      </div>
-    {% endif %}
-    {% if success %}
-      <div class="mb-3 rounded-md border border-green-200 bg-green-50 p-3 text-green-800 text-sm">
-        {{ success }}
-      </div>
-    {% endif %}
-
-    <form method="POST" id="registerForm" action="{{ url_for('auth.register') }}" class="space-y-4">
-      <div>
-        <label for="rut" class="block text-sm font-medium text-gray-700 mb-1">RUT</label>
-        <input type="text" id="rut" name="rut" placeholder="12.345.678-9" required
-               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
-                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+<div class="min-h-[75vh] flex items-center justify-center px-4 py-8">
+  <div class="w-full max-w-lg animate-scale-in">
+    <!-- Tarjeta principal con glassmorphism -->
+    <div class="card-lemac hover-lift">
+      <!-- Header con gradiente -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-secondary-blue to-accent-purple mb-4 animate-pulse">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+          </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-gradient mb-2">
+          Crear Cuenta
+        </h1>
+        <p class="text-text-secondary">Únete a la comunidad de Emoticlass</p>
       </div>
 
-      <div>
-        <label for="nombre_completo" class="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
-        <input type="text" id="nombre_completo" name="nombre_completo" placeholder="Juan Pérez García" required
-               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
-                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+      <!-- Mensajes flash mejorados -->
+      {% if error %}
+        <div class="flash-message flash-error mb-6 animate-fade-in-up">
+          <div class="flex items-center gap-3">
+            <div class="flex-shrink-0">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div>{{ error }}</div>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if success %}
+        <div class="flash-message flash-success mb-6 animate-fade-in-up">
+          <div class="flex items-center gap-3">
+            <div class="flex-shrink-0">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div>{{ success }}</div>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Formulario de registro -->
+      <form method="POST" id="registerForm" action="{{ url_for('auth.register') }}" class="space-y-6">
+        
+        <!-- Campo RUT -->
+        <div class="animate-fade-in-left" style="animation-delay: 0.1s;">
+          <label for="rut" class="block text-sm font-semibold text-text-primary mb-2">
+            RUT
+            <span class="text-primary-teal">*</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="rut" 
+              name="rut" 
+              placeholder="12.345.678-9" 
+              required
+              class="form-input peer"
+              autocomplete="off">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+              <svg class="w-5 h-5 text-text-light peer-focus:text-primary-teal transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-4 0v2m0 0h4"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campo Nombre Completo -->
+        <div class="animate-fade-in-right" style="animation-delay: 0.2s;">
+          <label for="nombre_completo" class="block text-sm font-semibold text-text-primary mb-2">
+            Nombre Completo
+            <span class="text-primary-teal">*</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="nombre_completo" 
+              name="nombre_completo" 
+              placeholder="Juan Pérez García" 
+              required
+              class="form-input peer"
+              autocomplete="name">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+              <svg class="w-5 h-5 text-text-light peer-focus:text-primary-teal transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campo Correo -->
+        <div class="animate-fade-in-left" style="animation-delay: 0.3s;">
+          <label for="correo" class="block text-sm font-semibold text-text-primary mb-2">
+            Correo Electrónico
+            <span class="text-primary-teal">*</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="email" 
+              id="correo" 
+              name="correo" 
+              placeholder="usuario@ejemplo.com" 
+              required
+              class="form-input peer"
+              autocomplete="email">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+              <svg class="w-5 h-5 text-text-light peer-focus:text-primary-teal transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campo Contraseña -->
+        <div class="animate-fade-in-right" style="animation-delay: 0.4s;">
+          <label for="password" class="block text-sm font-semibold text-text-primary mb-2">
+            Contraseña
+            <span class="text-primary-teal">*</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              required
+              class="form-input peer pr-12"
+              autocomplete="new-password">
+            <button 
+              type="button" 
+              class="absolute inset-y-0 right-0 flex items-center pr-4 text-text-light hover:text-primary-teal transition-colors"
+              onclick="togglePassword('password')"
+              tabindex="-1">
+              <svg id="password-icon-show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+              <svg id="password-icon-hide" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="mt-2 flex items-center gap-2">
+            <div id="password-strength" class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div id="password-strength-bar" class="h-full transition-all duration-300 rounded-full" style="width: 0%;"></div>
+            </div>
+            <small id="password-strength-text" class="text-xs text-text-light">Mínimo 6 caracteres</small>
+          </div>
+        </div>
+
+        <!-- Campo Confirmar Contraseña -->
+        <div class="animate-fade-in-left" style="animation-delay: 0.5s;">
+          <label for="confirm_password" class="block text-sm font-semibold text-text-primary mb-2">
+            Confirmar Contraseña
+            <span class="text-primary-teal">*</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="confirm_password" 
+              name="confirm_password" 
+              required
+              class="form-input peer pr-12"
+              autocomplete="new-password">
+            <button 
+              type="button" 
+              class="absolute inset-y-0 right-0 flex items-center pr-4 text-text-light hover:text-primary-teal transition-colors"
+              onclick="togglePassword('confirm_password')"
+              tabindex="-1">
+              <svg id="confirm-password-icon-show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+              <svg id="confirm-password-icon-hide" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+              </svg>
+            </button>
+          </div>
+          <div id="password-match-indicator" class="mt-2 hidden">
+            <div class="flex items-center gap-2 text-sm">
+              <svg id="match-check" class="w-4 h-4 text-green-500 hidden" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <svg id="match-x" class="w-4 h-4 text-red-500 hidden" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+              </svg>
+              <span id="match-text" class="text-text-secondary"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón de registro -->
+        <div class="animate-fade-in-up" style="animation-delay: 0.6s;">
+          <button type="submit" class="btn-primary w-full relative overflow-hidden group">
+            <span class="relative z-10 flex items-center justify-center gap-2">
+              <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+              </svg>
+              Crear Cuenta
+            </span>
+            <div class="absolute inset-0 bg-gradient-to-r from-accent-purple to-secondary-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </button>
+        </div>
+      </form>
+
+      <!-- Separator -->
+      <div class="relative my-8">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-200"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-4 bg-white text-text-light font-medium">¿Ya tienes cuenta?</span>
+        </div>
       </div>
 
-      <div>
-        <label for="correo" class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
-        <input type="email" id="correo" name="correo" placeholder="usuario@ejemplo.com" required
-               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
-                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+      <!-- Enlace de login -->
+      <div class="text-center animate-fade-in-up" style="animation-delay: 0.7s;">
+        <a href="{{ url_for('auth.login') }}" 
+           class="btn-secondary inline-flex items-center gap-2 hover-lift">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+          </svg>
+          Iniciar Sesión
+        </a>
       </div>
+    </div>
 
-      <div>
-        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-        <input type="password" id="password" name="password" required
-               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
-                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-        <small class="text-gray-500 text-xs">Mínimo 6 caracteres</small>
-      </div>
-
-      <div>
-        <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-1">Confirmar contraseña</label>
-        <input type="password" id="confirm_password" name="confirm_password" required
-               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
-                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-      </div>
-
-      <button type="submit" class="btn-primary">
-        Crear cuenta
-      </button>
-    </form>
-
-    <div class="mt-5 text-center text-sm text-gray-600">
-      ¿Ya tienes cuenta?
-      <a href="{{ url_for('auth.login') }}" class="text-teal-600 hover:underline">Inicia sesión aquí</a>
+    <!-- Footer informativo -->
+    <div class="mt-6 text-center text-sm text-text-light animate-fade-in-up" style="animation-delay: 0.8s;">
+      <p>Al registrarte, aceptas nuestros 
+        <a href="#" class="text-primary-teal hover:text-primary-dark transition-colors font-medium">
+          Términos y Condiciones
+        </a>
+      </p>
     </div>
   </div>
 </div>
@@ -69,38 +245,98 @@
 
 {% block scripts %}
 <script>
-  function formatRUT(rut){
-    rut = rut.replace(/\./g,'').replace(/-/g,'');
-    if(!/^[0-9]+[0-9kK]?$/.test(rut)) return rut;
-    let num = rut.slice(0,-1), dv = rut.slice(-1).toUpperCase();
-    num = num.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  // === Funciones de validación ===
+  function formatRUT(rut) {
+    rut = rut.replace(/\./g, '').replace(/-/g, '');
+    if (!/^[0-9]+[0-9kK]?$/.test(rut)) return rut;
+    let num = rut.slice(0, -1), dv = rut.slice(-1).toUpperCase();
+    num = num.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     return num + '-' + dv;
   }
-  function validateRUT(rut){
-    rut = rut.replace(/\./g,'').replace(/-/g,'');
-    if(rut.length<2) return false;
-    let num = rut.slice(0,-1), dv = rut.slice(-1).toUpperCase();
-    let sum=0, mul=2;
-    for(let i=num.length-1;i>=0;i--){ sum += parseInt(num[i])*mul; mul = (mul===7)?2:mul+1; }
-    let calc = 11 - (sum%11);
-    calc = (calc===11)?'0':(calc===10?'K':calc.toString());
-    return dv===calc;
-  }
-  function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
-  function showFieldError(field,msg){
-    const prev = field.parentNode.querySelector('.field-error'); if(prev) prev.remove();
-    field.classList.add('border-red-500','focus:ring-red-500','focus:border-red-500');
-    const sm=document.createElement('small');
-    sm.className='field-error text-red-600 text-xs';
-    sm.textContent=msg;
-    field.parentNode.appendChild(sm);
-  }
-  function clearFieldError(field){
-    field.classList.remove('border-red-500','focus:ring-red-500','focus:border-red-500');
-    const err=field.parentNode.querySelector('.field-error'); if(err) err.remove();
+
+  function validateRUT(rut) {
+    rut = rut.replace(/\./g, '').replace(/-/g, '');
+    if (rut.length < 2) return false;
+    let num = rut.slice(0, -1), dv = rut.slice(-1).toUpperCase();
+    let sum = 0, mul = 2;
+    for (let i = num.length - 1; i >= 0; i--) {
+      sum += parseInt(num[i]) * mul;
+      mul = (mul === 7) ? 2 : mul + 1;
+    }
+    let calc = 11 - (sum % 11);
+    calc = (calc === 11) ? '0' : (calc === 10 ? 'K' : calc.toString());
+    return dv === calc;
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function calculatePasswordStrength(password) {
+    let strength = 0;
+    if (password.length >= 6) strength += 25;
+    if (password.length >= 8) strength += 25;
+    if (/[A-Z]/.test(password)) strength += 25;
+    if (/[0-9]/.test(password) || /[^A-Za-z0-9]/.test(password)) strength += 25;
+    return strength;
+  }
+
+  // === Toggle password visibility ===
+  function togglePassword(fieldId) {
+    const passwordInput = document.getElementById(fieldId);
+    const showIcon = document.getElementById(fieldId === 'password' ? 'password-icon-show' : 'confirm-password-icon-show');
+    const hideIcon = document.getElementById(fieldId === 'password' ? 'password-icon-hide' : 'confirm-password-icon-hide');
+    
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      showIcon.classList.add('hidden');
+      hideIcon.classList.remove('hidden');
+    } else {
+      passwordInput.type = 'password';
+      showIcon.classList.remove('hidden');
+      hideIcon.classList.add('hidden');
+    }
+  }
+
+  // === Gestión de errores ===
+  function showFieldError(input, message) {
+    input.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+    input.classList.remove('border-green-500', 'focus:ring-green-500', 'focus:border-green-500');
+    
+    let errorElement = input.parentNode.querySelector('.field-error');
+    if (!errorElement) {
+      errorElement = document.createElement('div');
+      errorElement.className = 'field-error mt-2 text-sm text-red-600 flex items-center gap-2 animate-fade-in-up';
+      errorElement.innerHTML = `
+        <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+        </svg>
+        <span>${message}</span>
+      `;
+      input.parentNode.appendChild(errorElement);
+    } else {
+      errorElement.querySelector('span').textContent = message;
+    }
+  }
+
+  function showFieldSuccess(input) {
+    input.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+    input.classList.add('border-green-500', 'focus:ring-green-500', 'focus:border-green-500');
+    clearFieldError(input);
+  }
+
+  function clearFieldError(input) {
+    input.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+    input.classList.remove('border-green-500', 'focus:ring-green-500', 'focus:border-green-500');
+    
+    const errorElement = input.parentNode.querySelector('.field-error');
+    if (errorElement) {
+      errorElement.remove();
+    }
+  }
+
+  // === Inicialización ===
+  document.addEventListener('DOMContentLoaded', function() {
     const rutInput = document.getElementById('rut');
     const nombreInput = document.getElementById('nombre_completo');
     const correoInput = document.getElementById('correo');
@@ -108,42 +344,207 @@
     const confirmPasswordInput = document.getElementById('confirm_password');
     const form = document.getElementById('registerForm');
 
-    rutInput.addEventListener('input', function(){
-      const pos=this.selectionStart, len=this.value.length;
+    // === RUT handling ===
+    rutInput.addEventListener('input', function() {
+      const pos = this.selectionStart;
+      const oldLen = this.value.length;
       this.value = formatRUT(this.value);
-      const diff=this.value.length-len; this.setSelectionRange(pos+diff,pos+diff);
-    });
-    rutInput.addEventListener('blur', function(){ this.value && (!validateRUT(this.value)?showFieldError(this,'RUT inválido'):clearFieldError(this)); });
-
-    nombreInput.addEventListener('blur', function(){
-      if(this.value){ this.value.trim().split(' ').length<2 ? showFieldError(this,'Ingrese nombre y apellido') : clearFieldError(this); }
+      const diff = this.value.length - oldLen;
+      this.setSelectionRange(pos + diff, pos + diff);
+      
+      if (this.value) clearFieldError(this);
     });
 
-    correoInput.addEventListener('blur', function(){
-      if(this.value){ !validateEmail(this.value) ? showFieldError(this,'Correo electrónico inválido') : clearFieldError(this); }
+    rutInput.addEventListener('blur', function() {
+      if (this.value) {
+        if (!validateRUT(this.value)) {
+          showFieldError(this, 'RUT inválido. Verifica el formato y dígito verificador.');
+        } else {
+          showFieldSuccess(this);
+        }
+      }
     });
 
-    function validatePasswordConfirmation(){
-      if(confirmPasswordInput.value !== passwordInput.value){ showFieldError(confirmPasswordInput,'Las contraseñas no coinciden'); return false; }
-      clearFieldError(confirmPasswordInput); return true;
+    // === Nombre validation ===
+    nombreInput.addEventListener('blur', function() {
+      if (this.value) {
+        const words = this.value.trim().split(' ').filter(word => word.length > 0);
+        if (words.length < 2) {
+          showFieldError(this, 'Ingrese nombre y apellido completo.');
+        } else {
+          showFieldSuccess(this);
+        }
+      }
+    });
+
+    // === Email validation ===
+    correoInput.addEventListener('blur', function() {
+      if (this.value) {
+        if (!validateEmail(this.value)) {
+          showFieldError(this, 'Ingrese un correo electrónico válido.');
+        } else {
+          showFieldSuccess(this);
+        }
+      }
+    });
+
+    // === Password strength indicator ===
+    passwordInput.addEventListener('input', function() {
+      const strength = calculatePasswordStrength(this.value);
+      const strengthBar = document.getElementById('password-strength-bar');
+      const strengthText = document.getElementById('password-strength-text');
+      
+      strengthBar.style.width = strength + '%';
+      
+      if (strength === 0) {
+        strengthBar.className = 'h-full transition-all duration-300 rounded-full';
+        strengthText.textContent = 'Mínimo 6 caracteres';
+        strengthText.className = 'text-xs text-text-light';
+      } else if (strength < 50) {
+        strengthBar.className = 'h-full transition-all duration-300 rounded-full bg-red-500';
+        strengthText.textContent = 'Débil';
+        strengthText.className = 'text-xs text-red-600';
+      } else if (strength < 75) {
+        strengthBar.className = 'h-full transition-all duration-300 rounded-full bg-yellow-500';
+        strengthText.textContent = 'Regular';
+        strengthText.className = 'text-xs text-yellow-600';
+      } else if (strength < 100) {
+        strengthBar.className = 'h-full transition-all duration-300 rounded-full bg-blue-500';
+        strengthText.textContent = 'Buena';
+        strengthText.className = 'text-xs text-blue-600';
+      } else {
+        strengthBar.className = 'h-full transition-all duration-300 rounded-full bg-green-500';
+        strengthText.textContent = 'Excelente';
+        strengthText.className = 'text-xs text-green-600';
+      }
+      
+      // Revalidar confirmación si hay algo escrito
+      if (confirmPasswordInput.value) {
+        validatePasswordConfirmation();
+      }
+    });
+
+    passwordInput.addEventListener('blur', function() {
+      if (this.value && this.value.length < 6) {
+        showFieldError(this, 'La contraseña debe tener al menos 6 caracteres.');
+      } else if (this.value) {
+        clearFieldError(this);
+      }
+    });
+
+    // === Password confirmation ===
+    function validatePasswordConfirmation() {
+      const indicator = document.getElementById('password-match-indicator');
+      const checkIcon = document.getElementById('match-check');
+      const xIcon = document.getElementById('match-x');
+      const text = document.getElementById('match-text');
+      
+      if (confirmPasswordInput.value) {
+        indicator.classList.remove('hidden');
+        
+        if (confirmPasswordInput.value === passwordInput.value) {
+          checkIcon.classList.remove('hidden');
+          xIcon.classList.add('hidden');
+          text.textContent = 'Las contraseñas coinciden';
+          text.className = 'text-green-600';
+          showFieldSuccess(confirmPasswordInput);
+          return true;
+        } else {
+          checkIcon.classList.add('hidden');
+          xIcon.classList.remove('hidden');
+          text.textContent = 'Las contraseñas no coinciden';
+          text.className = 'text-red-600';
+          showFieldError(confirmPasswordInput, 'Las contraseñas no coinciden.');
+          return false;
+        }
+      } else {
+        indicator.classList.add('hidden');
+        return false;
+      }
     }
-    passwordInput.addEventListener('blur', function(){
-      if(this.value){ this.value.length<6 ? showFieldError(this,'La contraseña debe tener al menos 6 caracteres') : clearFieldError(this); }
-      if(confirmPasswordInput.value) validatePasswordConfirmation();
-    });
-    confirmPasswordInput.addEventListener('blur', function(){ if(this.value) validatePasswordConfirmation(); });
 
-    form.addEventListener('submit', function(e){
-      let ok=true;
-      if(!rutInput.value || !validateRUT(rutInput.value)){ showFieldError(rutInput,'RUT inválido'); ok=false; }
-      if(!nombreInput.value || nombreInput.value.trim().split(' ').length<2){ showFieldError(nombreInput,'Ingrese nombre y apellido'); ok=false; }
-      if(!correoInput.value || !validateEmail(correoInput.value)){ showFieldError(correoInput,'Correo electrónico inválido'); ok=false; }
-      if(!passwordInput.value || passwordInput.value.length<6){ showFieldError(passwordInput,'La contraseña debe tener al menos 6 caracteres'); ok=false; }
-      if(!validatePasswordConfirmation()) ok=false;
-      if(!ok) e.preventDefault();
+    confirmPasswordInput.addEventListener('input', validatePasswordConfirmation);
+    confirmPasswordInput.addEventListener('blur', function() {
+      if (this.value) validatePasswordConfirmation();
     });
 
+    // === Form submission ===
+    form.addEventListener('submit', function(e) {
+      let isValid = true;
+      
+      // Validate all fields
+      if (!rutInput.value || !validateRUT(rutInput.value)) {
+        showFieldError(rutInput, 'RUT inválido. Verifica el formato y dígito verificador.');
+        isValid = false;
+      }
+      
+      if (!nombreInput.value || nombreInput.value.trim().split(' ').filter(w => w.length > 0).length < 2) {
+        showFieldError(nombreInput, 'Ingrese nombre y apellido completo.');
+        isValid = false;
+      }
+      
+      if (!correoInput.value || !validateEmail(correoInput.value)) {
+        showFieldError(correoInput, 'Ingrese un correo electrónico válido.');
+        isValid = false;
+      }
+      
+      if (!passwordInput.value || passwordInput.value.length < 6) {
+        showFieldError(passwordInput, 'La contraseña debe tener al menos 6 caracteres.');
+        isValid = false;
+      }
+      
+      if (!validatePasswordConfirmation()) {
+        isValid = false;
+      }
+      
+      if (!isValid) {
+        e.preventDefault();
+        // Focus on first error field
+        const firstError = form.querySelector('.border-red-500');
+        if (firstError) firstError.focus();
+      } else {
+        // Show loading state
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalContent = submitBtn.innerHTML;
+        submitBtn.innerHTML = `
+          <div class="flex items-center justify-center gap-2">
+            <div class="loading-spinner"></div>
+            <span>Creando cuenta...</span>
+          </div>
+        `;
+        submitBtn.disabled = true;
+        
+        // Restore button after timeout in case of error
+        setTimeout(() => {
+          submitBtn.innerHTML = originalContent;
+          submitBtn.disabled = false;
+        }, 8000);
+      }
+    });
+
+    // === Enhanced focus effects ===
+    const inputs = [rutInput, nombreInput, correoInput, passwordInput, confirmPasswordInput];
+    inputs.forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentNode.classList.add('transform', 'scale-[1.02]');
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentNode.classList.remove('transform', 'scale-[1.02]');
+      });
+    });
+
+    // Auto-focus on RUT field
     rutInput.focus();
+
+    // Staggered entrance animations
+    const animatedElements = document.querySelectorAll('[style*="animation-delay"]');
+    animatedElements.forEach((el, index) => {
+      el.style.opacity = '0';
+      setTimeout(() => {
+        el.style.opacity = '1';
+      }, index * 100);
+    });
   });
 </script>
 {% endblock %}
