@@ -1,0 +1,154 @@
+/* 🎨 Paleta Lemac Datalab */
+:root {
+  --verde-teal: #2DB29B;
+  --verde-oscuro: #207568;
+  --gris-suave: #f5f7f9;
+  --gris-texto: #4b5563;
+  --blanco: #ffffff;
+
+  /* 🌈 Gradientes */
+  --gradiente-principal: linear-gradient(135deg, var(--verde-teal), var(--verde-oscuro));
+  --gradiente-claro: linear-gradient(135deg, var(--blanco), var(--gris-suave));
+  --gradiente-navbar: linear-gradient(90deg, var(--verde-oscuro), var(--verde-teal));
+  --gradiente-acento: linear-gradient(135deg, var(--verde-teal), var(--blanco));
+}
+
+/* 🔹 Base */
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--gradiente-claro);
+  color: var(--gris-texto);
+  min-height: 100vh;
+}
+
+/* Links */
+a {
+  transition: all 0.2s ease-in-out;
+}
+a:hover {
+  opacity: 0.85;
+}
+
+/* Navbar personalizado */
+.topbar-custom {
+  background: var(--gradiente-navbar);
+  color: var(--blanco);
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Badge usuario */
+.userbadge-custom {
+  background: var(--gradiente-principal);
+  color: var(--blanco);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Flash messages */
+.flash {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.flash.success {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+.flash.error {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+.flash.warning {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+  border: 1px solid #f59e0b;
+}
+
+/* Formularios */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(45, 178, 155, 0.4);
+  border-radius: 0.375rem;
+}
+
+/* Botón animado */
+.animated-btn {
+  transition: transform 0.15s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.animated-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 14px rgba(0,0,0,0.12);
+}
+
+/* Botones principales Lemac */
+.btn-primary {
+  background: var(--gradiente-principal);
+  color: var(--blanco);
+  font-weight: 600;
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  transition: all 0.2s ease-in-out;
+}
+.btn-primary:hover {
+  filter: brightness(1.05);
+}
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(45, 178, 155, 0.4);
+}
+
+/* Tarjeta Lemac */
+.card-lemac {
+  background: var(--blanco);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+  border: 1px solid #eef2f7;
+  padding: 1.5rem;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-weight: 700;
+  color: #111827;
+}
+.section-title::before {
+  content:"";
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background: var(--verde-teal);
+}
+
+/* Botones secundarios */
+.btn-secondary {
+  background: var(--gradiente-acento);
+  color: #0f766e;
+  border-radius: .375rem;
+  padding: .5rem 1rem;
+  font-weight: 600;
+}
+.btn-secondary:hover {
+  filter: brightness(.97);
+}
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color:#fff;
+  border-radius:.375rem;
+  padding:.5rem 1rem;
+  font-weight:600;
+}
+.btn-danger:hover {
+  filter: brightness(.95);
+}

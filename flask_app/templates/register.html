@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Registro — Emoticlass{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center">
+  <div class="w-full max-w-lg bg-white shadow-xl rounded-2xl p-6">
+    <h1 class="text-xl font-semibold text-gray-800 text-center mb-4">Crear Cuenta</h1>
+
+    {% if error %}
+      <div class="mb-3 rounded-md border border-red-200 bg-red-50 p-3 text-red-800 text-sm">
+        {{ error }}
+      </div>
+    {% endif %}
+    {% if success %}
+      <div class="mb-3 rounded-md border border-green-200 bg-green-50 p-3 text-green-800 text-sm">
+        {{ success }}
+      </div>
+    {% endif %}
+
+    <form method="POST" id="registerForm" action="{{ url_for('auth.register') }}" class="space-y-4">
+      <div>
+        <label for="rut" class="block text-sm font-medium text-gray-700 mb-1">RUT</label>
+        <input type="text" id="rut" name="rut" placeholder="12.345.678-9" required
+               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
+                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+      </div>
+
+      <div>
+        <label for="nombre_completo" class="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+        <input type="text" id="nombre_completo" name="nombre_completo" placeholder="Juan Pérez García" required
+               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
+                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+      </div>
+
+      <div>
+        <label for="correo" class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+        <input type="email" id="correo" name="correo" placeholder="usuario@ejemplo.com" required
+               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
+                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+        <input type="password" id="password" name="password" required
+               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
+                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+        <small class="text-gray-500 text-xs">Mínimo 6 caracteres</small>
+      </div>
+
+      <div>
+        <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-1">Confirmar contraseña</label>
+        <input type="password" id="confirm_password" name="confirm_password" required
+               class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
+                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+      </div>
+
+      <button type="submit" class="btn-primary">
+        Crear cuenta
+      </button>
+    </form>
+
+    <div class="mt-5 text-center text-sm text-gray-600">
+      ¿Ya tienes cuenta?
+      <a href="{{ url_for('auth.login') }}" class="text-teal-600 hover:underline">Inicia sesión aquí</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function formatRUT(rut){
+    rut = rut.replace(/\./g,'').replace(/-/g,'');
+    if(!/^[0-9]+[0-9kK]?$/.test(rut)) return rut;
+    let num = rut.slice(0,-1), dv = rut.slice(-1).toUpperCase();
+    num = num.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+    return num + '-' + dv;
+  }
+  function validateRUT(rut){
+    rut = rut.replace(/\./g,'').replace(/-/g,'');
+    if(rut.length<2) return false;
+    let num = rut.slice(0,-1), dv = rut.slice(-1).toUpperCase();
+    let sum=0, mul=2;
+    for(let i=num.length-1;i>=0;i--){ sum += parseInt(num[i])*mul; mul = (mul===7)?2:mul+1; }
+    let calc = 11 - (sum%11);
+    calc = (calc===11)?'0':(calc===10?'K':calc.toString());
+    return dv===calc;
+  }
+  function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+  function showFieldError(field,msg){
+    const prev = field.parentNode.querySelector('.field-error'); if(prev) prev.remove();
+    field.classList.add('border-red-500','focus:ring-red-500','focus:border-red-500');
+    const sm=document.createElement('small');
+    sm.className='field-error text-red-600 text-xs';
+    sm.textContent=msg;
+    field.parentNode.appendChild(sm);
+  }
+  function clearFieldError(field){
+    field.classList.remove('border-red-500','focus:ring-red-500','focus:border-red-500');
+    const err=field.parentNode.querySelector('.field-error'); if(err) err.remove();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const rutInput = document.getElementById('rut');
+    const nombreInput = document.getElementById('nombre_completo');
+    const correoInput = document.getElementById('correo');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const form = document.getElementById('registerForm');
+
+    rutInput.addEventListener('input', function(){
+      const pos=this.selectionStart, len=this.value.length;
+      this.value = formatRUT(this.value);
+      const diff=this.value.length-len; this.setSelectionRange(pos+diff,pos+diff);
+    });
+    rutInput.addEventListener('blur', function(){ this.value && (!validateRUT(this.value)?showFieldError(this,'RUT inválido'):clearFieldError(this)); });
+
+    nombreInput.addEventListener('blur', function(){
+      if(this.value){ this.value.trim().split(' ').length<2 ? showFieldError(this,'Ingrese nombre y apellido') : clearFieldError(this); }
+    });
+
+    correoInput.addEventListener('blur', function(){
+      if(this.value){ !validateEmail(this.value) ? showFieldError(this,'Correo electrónico inválido') : clearFieldError(this); }
+    });
+
+    function validatePasswordConfirmation(){
+      if(confirmPasswordInput.value !== passwordInput.value){ showFieldError(confirmPasswordInput,'Las contraseñas no coinciden'); return false; }
+      clearFieldError(confirmPasswordInput); return true;
+    }
+    passwordInput.addEventListener('blur', function(){
+      if(this.value){ this.value.length<6 ? showFieldError(this,'La contraseña debe tener al menos 6 caracteres') : clearFieldError(this); }
+      if(confirmPasswordInput.value) validatePasswordConfirmation();
+    });
+    confirmPasswordInput.addEventListener('blur', function(){ if(this.value) validatePasswordConfirmation(); });
+
+    form.addEventListener('submit', function(e){
+      let ok=true;
+      if(!rutInput.value || !validateRUT(rutInput.value)){ showFieldError(rutInput,'RUT inválido'); ok=false; }
+      if(!nombreInput.value || nombreInput.value.trim().split(' ').length<2){ showFieldError(nombreInput,'Ingrese nombre y apellido'); ok=false; }
+      if(!correoInput.value || !validateEmail(correoInput.value)){ showFieldError(correoInput,'Correo electrónico inválido'); ok=false; }
+      if(!passwordInput.value || passwordInput.value.length<6){ showFieldError(passwordInput,'La contraseña debe tener al menos 6 caracteres'); ok=false; }
+      if(!validatePasswordConfirmation()) ok=false;
+      if(!ok) e.preventDefault();
+    });
+
+    rutInput.focus();
+  });
+</script>
+{% endblock %}

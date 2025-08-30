@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% block title %}Configuración — Emoticlass{% endblock %}
+
+{% block content %}
+<!-- Encabezado -->
+<div class="mb-4 flex items-center justify-between">
+  <h1 class="text-xl font-semibold text-white">Configuración</h1>
+  <a href="{{ url_for('core.dashboard') }}" class="btn-secondary">← Volver al dashboard</a>
+</div>
+
+<div class="grid gap-6 md:grid-cols-2">
+  <!-- Configuración de Cámara -->
+  <section class="card-lemac p-5">
+    <h2 class="section-title mb-4">Configuración de cámara</h2>
+    <form method="POST" action="{{ url_for('core.config') }}" class="space-y-4">
+      <div>
+        <label for="camera" class="block text-sm font-medium text-gray-700 mb-1">Seleccionar cámara</label>
+        <select id="camera" name="camera" required
+          class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+          {% for cam in cameras %}
+            <option value="{{ cam }}" {% if cam == current_camera_index %}selected{% endif %}>Cámara {{ cam }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label for="resolution" class="block text-sm font-medium text-gray-700 mb-1">Resolución</label>
+        <select id="resolution" name="resolution" required
+          class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+          {% for res in resolutions %}
+            <option value="{{ res }}" {% if res == current_resolution %}selected{% endif %}>{{ res }}</option>
+          {% endfor %}
+        </select>
+        <small class="text-gray-500 text-xs">Sugerido: 640×480 para equipos modestos.</small>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" name="configurar_camara" class="btn-primary">Configurar cámara</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Vista previa -->
+  <section class="card-lemac p-5">
+    <h2 class="section-title mb-4">Vista previa</h2>
+    <div class="aspect-video w-full overflow-hidden rounded-lg bg-gray-100 flex items-center justify-center">
+      {% if camera_configured %}
+        <img src="{{ url_for('core.video_feed') }}" alt="Vista previa de la cámara" class="w-full h-full object-cover">
+      {% else %}
+        <div class="text-center text-gray-500 space-y-2">
+          <div class="text-4xl">📹</div>
+          <p>Selecciona una cámara para ver la vista previa</p>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if camera_configured %}
+      <div class="mt-4 rounded-md border border-green-200 bg-green-50 p-3 text-green-800">
+        <p class="font-medium">✅ Cámara configurada correctamente</p>
+        <p class="text-sm">Resolución actual: {{ current_resolution }}</p>
+      </div>
+    {% endif %}
+  </section>
+</div>
+
+<!-- Configuración Académica -->
+<section class="card-lemac p-5 mt-6">
+  <h2 class="section-title mb-4">Configuración académica</h2>
+  <form method="POST" id="academicForm" action="{{ url_for('core.config') }}" class="space-y-4">
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <label for="nivel_ensenanza" class="block text-sm font-medium text-gray-700 mb-1">Nivel de enseñanza</label>
+        <select id="nivel_ensenanza" name="nivel_ensenanza" required onchange="updateGrados()"
+          class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+          <option value="">Seleccionar nivel...</option>
+          <option value="pre-basica" {% if academic_config.get('nivel_ensenanza') == 'pre-basica' %}selected{% endif %}>Pre-básica</option>
+          <option value="basica" {% if academic_config.get('nivel_ensenanza') == 'basica' %}selected{% endif %}>Básica</option>
+          <option value="media" {% if academic_config.get('nivel_ensenanza') == 'media' %}selected{% endif %}>Media</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="grado" class="block text-sm font-medium text-gray-700 mb-1">Grado</label>
+        <select id="grado" name="grado" required {% if not academic_config.get('nivel_ensenanza') %}disabled{% endif %}
+          class="w-full rounded-md border-gray-300 disabled:bg-gray-100 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+          <option value="">Seleccionar grado...</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="materia" class="block text-sm font-medium text-gray-700 mb-1">Materia</label>
+        <select id="materia" name="materia" required
+          class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+          <option value="">Seleccionar materia...</option>
+          <option value="musica"     {% if academic_config.get('materia') == 'musica' %}selected{% endif %}>Música</option>
+          <option value="filosofia"  {% if academic_config.get('materia') == 'filosofia' %}selected{% endif %}>Filosofía</option>
+          <option value="matematicas"{% if academic_config.get('materia') == 'matematicas' %}selected{% endif %}>Matemáticas</option>
+          <option value="lenguaje"   {% if academic_config.get('materia') == 'lenguaje' %}selected{% endif %}>Lenguaje</option>
+          <option value="quimica"    {% if academic_config.get('materia') == 'quimica' %}selected{% endif %}>Química</option>
+          <option value="biologia"   {% if academic_config.get('materia') == 'biologia' %}selected{% endif %}>Biología</option>
+          <option value="historia"   {% if academic_config.get('materia') == 'historia' %}selected{% endif %}>Historia</option>
+          <option value="religion"   {% if academic_config.get('materia') == 'religion' %}selected{% endif %}>Religión</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="temperatura" class="block text-sm font-medium text-gray-700 mb-1">Temperatura Valparaíso</label>
+        <input type="text" id="temperatura" name="temperatura" readonly
+          value="{{ temperatura if temperatura else 'Cargando...' }}"
+          class="w-full rounded-md border-gray-300 bg-gray-100 text-gray-700">
+        <small class="text-gray-500 text-xs">Se actualiza automáticamente</small>
+      </div>
+    </div>
+
+    <div class="pt-2">
+      <button type="submit" name="configurar_academica" class="btn-primary">Guardar configuración académica</button>
+    </div>
+  </form>
+
+  {% if academic_configured and camera_configured %}
+    <div class="mt-4 rounded-md border border-teal-200 bg-teal-50 p-3 text-teal-800">
+      <h4 class="font-semibold">✅ Configuración Completa</h4>
+      <p class="text-sm">
+        <strong>Cámara:</strong> Configurada |
+        <strong>Nivel:</strong> {{ academic_config.get('nivel_ensenanza', '').title() }} |
+        <strong>Grado:</strong> {{ academic_config.get('grado', '').replace('_', ' ').title() }} |
+        <strong>Materia:</strong> {{ academic_config.get('materia', '').title() }}
+      </p>
+    </div>
+  {% else %}
+    <div class="mt-4 rounded-md border border-yellow-200 bg-yellow-50 p-3 text-yellow-800">
+      <h4 class="font-semibold">⚠️ Configuración incompleta</h4>
+      <p class="text-sm">
+        {% if not camera_configured %}Debes configurar la cámara antes de continuar al dashboard.<br>{% endif %}
+        {% if not academic_configured %}Debes completar la configuración académica antes de continuar.<br>{% endif %}
+      </p>
+    </div>
+  {% endif %}
+</section>
+
+{% if camera_configured and academic_configured %}
+  <div class="text-center mt-6">
+    <a href="{{ url_for('core.dashboard') }}" class="btn-primary inline-flex w-auto">
+      🚀 Ir al Dashboard
+    </a>
+  </div>
+{% endif %}
+
+<!-- Instrucciones -->
+<section class="card-lemac p-5 mt-6">
+  <h2 class="section-title mb-4">Instrucciones</h2>
+  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div class="rounded-lg border border-gray-200 p-4">
+      <h4 class="font-semibold text-gray-800">Paso 1</h4>
+      <p class="text-sm text-gray-600">Selecciona la cámara que deseas utilizar para el análisis de emociones.</p>
+    </div>
+    <div class="rounded-lg border border-gray-200 p-4">
+      <h4 class="font-semibold text-gray-800">Paso 2</h4>
+      <p class="text-sm text-gray-600">Elige la resolución adecuada según tu hardware y necesidades.</p>
+    </div>
+    <div class="rounded-lg border border-gray-200 p-4">
+      <h4 class="font-semibold text-gray-800">Paso 3</h4>
+      <p class="text-sm text-gray-600">Configura el nivel de enseñanza, grado y materia para contextualizar los datos.</p>
+    </div>
+    <div class="rounded-lg border border-gray-200 p-4">
+      <h4 class="font-semibold text-gray-800">Paso 4</h4>
+      <p class="text-sm text-gray-600">Haz clic en “Ir al Dashboard” para comenzar el análisis en tiempo real.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const gradosPorNivel = {
+    'pre-basica': [{ value:'prekinder', text:'Pre-Kinder' }, { value:'kinder', text:'Kinder' }],
+    'basica': [
+      { value:'1-basico', text:'1° Básico' }, { value:'2-basico', text:'2° Básico' },
+      { value:'3-basico', text:'3° Básico' }, { value:'4-basico', text:'4° Básico' },
+      { value:'5-basico', text:'5° Básico' }, { value:'6-basico', text:'6° Básico' },
+      { value:'7-basico', text:'7° Básico' }, { value:'8-basico', text:'8° Básico' }
+    ],
+    'media': [
+      { value:'1-medio', text:'1° Medio' }, { value:'2-medio', text:'2° Medio' },
+      { value:'3-medio', text:'3° Medio' }, { value:'4-medio', text:'4° Medio' }
+    ]
+  };
+
+  function updateGrados(){
+    const nivelSelect = document.getElementById('nivel_ensenanza');
+    const gradoSelect = document.getElementById('grado');
+    const selectedNivel = nivelSelect.value;
+    const currentGrado = "{{ academic_config.get('grado', '') }}";
+
+    gradoSelect.innerHTML = '<option value="">Seleccionar grado...</option>';
+    if(selectedNivel && gradosPorNivel[selectedNivel]){
+      gradoSelect.disabled = false;
+      gradosPorNivel[selectedNivel].forEach(g=>{
+        const opt = document.createElement('option');
+        opt.value = g.value; opt.textContent = g.text;
+        if(g.value === currentGrado) opt.selected = true;
+        gradoSelect.appendChild(opt);
+      });
+    } else {
+      gradoSelect.disabled = true;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const nivelSelect = document.getElementById('nivel_ensenanza');
+    if(nivelSelect.value){ updateGrados(); }
+
+    setInterval(()=>{
+      fetch('{{ url_for("core.get_temperature_api") }}')
+        .then(r=>r.json())
+        .then(data=>{
+          const tempInput = document.getElementById('temperatura');
+          if(tempInput && data.temperature !== undefined){
+            tempInput.value = data.temperature + '°C';
+          }
+        })
+        .catch(err=>console.error('Error al obtener temperatura:', err));
+    }, 30000);
+  });
+</script>
+{% endblock %}

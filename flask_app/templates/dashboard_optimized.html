@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Emoticlass{% endblock %}
+
+{% block extra_head %}
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-2xl font-bold text-gray-800">Dashboard de Análisis de Emociones</h1>
+  <div class="flex items-center gap-2">
+    <span id="current-time" class="text-sm text-gray-600"></span>
+    <a href="{{ url_for('core.config') }}"
+       class="inline-flex items-center rounded-md bg-gray-200 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300">Configuración</a>
+    <a href="{{ url_for('auth.logout') }}"
+       class="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700">Cerrar Sesión</a>
+  </div>
+</div>
+
+<!-- Rostros -->
+<div class="rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 text-white p-4 mb-6">
+  <h3 class="text-lg font-semibold">👥 Rostros Detectados: <span id="face-count">0</span> / 45</h3>
+  <p class="text-sm opacity-90">Sistema optimizado para grupos grandes</p>
+</div>
+
+<!-- Indicadores -->
+<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+  <div class="rounded-xl bg-white shadow p-4 text-center">
+    <div class="text-sm text-gray-500">Emoción Predominante</div>
+    <div class="text-3xl font-bold text-gray-800 mt-2" id="current-emotion">Detectando...</div>
+  </div>
+  <div class="rounded-xl bg-white shadow p-4 text-center">
+    <div class="text-sm text-gray-500">Confianza</div>
+    <div class="text-3xl font-bold text-gray-800 mt-2" id="current-confidence">0%</div>
+  </div>
+  <div class="rounded-xl bg-white shadow p-4 text-center">
+    <div class="text-sm text-gray-500">Carga Cognitiva Grupal</div>
+    <div class="text-3xl font-bold text-gray-800 mt-2" id="current-cognitive-load">0%</div>
+  </div>
+  <div class="rounded-xl bg-white shadow p-4 text-center">
+    <div class="text-sm text-gray-500">Estado del Sistema</div>
+    <div class="text-3xl font-bold text-gray-800 mt-2" id="system-status">🟢 Activo</div>
+  </div>
+</div>
+
+<!-- Video -->
+<section class="mb-6">
+  <h2 class="text-xl font-semibold text-gray-800 mb-3">Vista en Tiempo Real</h2>
+  <div class="grid gap-4 md:grid-cols-5">
+    <div class="md:col-span-3">
+      <img src="{{ url_for('core.video_feed') }}" alt="Video en tiempo real"
+           class="w-full rounded-xl border border-gray-200">
+    </div>
+    <div class="md:col-span-2 space-y-3">
+      <div class="rounded-lg bg-white shadow p-3">
+        <h3 class="font-semibold text-gray-800">🎯 Análisis Activo</h3>
+        <p class="text-sm text-gray-600">El sistema está analizando las emociones en tiempo real.</p>
+      </div>
+      <div class="rounded-lg bg-white shadow p-3">
+        <h3 class="font-semibold text-gray-800">🚀 Motor</h3>
+        <p class="text-sm text-gray-600">DeepFace + OpenCV para múltiples rostros.</p>
+      </div>
+      <div class="rounded-lg bg-white shadow p-3">
+        <h3 class="font-semibold text-gray-800">⚡ Frecuencia</h3>
+        <p class="text-sm text-gray-600">Actualizaciones cada ~500ms.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Gráficos -->
+<div class="grid gap-4 md:grid-cols-2 mb-6">
+  <div class="rounded-2xl bg-white shadow p-4 h-[400px] flex flex-col">
+    <div class="text-center text-gray-800 font-semibold mb-3">📊 Distribución de Emociones Grupal</div>
+    <div class="flex-1 overflow-y-auto" id="emotions-bars"></div>
+  </div>
+
+  <div class="rounded-2xl bg-white shadow p-4 h-[400px] flex flex-col">
+    <div class="text-center text-gray-800 font-semibold mb-3">👥 Métricas del Grupo</div>
+    <div class="flex-1">
+      <canvas id="groupMetricsChart" class="w-full h-full"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Controles -->
+<div class="rounded-xl bg-gray-900 text-white p-4 flex flex-wrap gap-3">
+  <button id="pause-btn"
+          class="inline-flex items-center rounded-md bg-yellow-500 px-4 py-2 text-sm font-semibold hover:bg-yellow-600">
+    ⏸️ Pausar Análisis
+  </button>
+  <button id="export-btn"
+          class="inline-flex items-center rounded-md bg-sky-500 px-4 py-2 text-sm font-semibold hover:bg-sky-600">
+    📊 Exportar Datos
+  </button>
+  <button id="reset-btn"
+          class="inline-flex items-center rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-300">
+    🔄 Reiniciar
+  </button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const socket = io(); let isPaused=false; let groupMetricsChart;
+  const emotionColors = {feliz:'#4CAF50',triste:'#2196F3',enojado:'#F44336',neutral:'#9E9E9E',sorpresa:'#FF9800',miedo:'#9C27B0',asco:'#795548'};
+
+  function initGroupMetricsChart(){
+    const ctx=document.getElementById('groupMetricsChart').getContext('2d');
+    groupMetricsChart=new Chart(ctx,{
+      type:'doughnut',
+      data:{labels:['Emociones Positivas','Emociones Negativas','Neutral'],
+        datasets:[{data:[33,33,34],backgroundColor:['#4CAF50','#F44336','#9E9E9E'],borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#1f2937'}}}}
+    });
+  }
+
+  function updateEmotionBars(values){
+    const c=document.getElementById('emotions-bars'); c.innerHTML='';
+    Object.entries(values).forEach(([emotion,val])=>{
+      const wrap=document.createElement('div');
+      wrap.className='mb-2';
+      wrap.innerHTML=`
+        <div class="text-sm text-gray-700 mb-1 capitalize">${emotion}</div>
+        <div class="w-full bg-gray-200 rounded-md h-6 overflow-hidden">
+          <div class="h-6 flex items-center justify-center text-white text-xs font-bold"
+               style="width:${val}%;background-color:${emotionColors[emotion]||'#666'}">
+            ${Math.round(val)}%
+          </div>
+        </div>`;
+      c.appendChild(wrap);
+    });
+  }
+
+  function updateGroupMetrics(values){
+    const pos=['feliz'], neg=['triste','enojado','miedo','asco'], neu=['neutral','sorpresa'];
+    let p=0,n=0,u=0;
+    Object.entries(values).forEach(([e,v])=>{
+      if(pos.includes(e)) p+=v; else if(neg.includes(e)) n+=v; else u+=v;
+    });
+    const t=p+n+u; if(t>0){
+      groupMetricsChart.data.datasets[0].data=[p/t*100,n/t*100,u/t*100];
+      groupMetricsChart.update('none');
+    }
+  }
+
+  socket.on('emotion_update',(data)=>{
+    if(isPaused) return;
+    document.getElementById('current-emotion').textContent=data.emotion||'Sin detectar';
+    document.getElementById('current-confidence').textContent=Math.round(data.value||0)+'%';
+    document.getElementById('current-cognitive-load').textContent=Math.round(data.cognitive_load||0)+'%';
+    document.getElementById('face-count').textContent=data.face_count||0;
+
+    if(data.emotion_values){ updateEmotionBars(data.emotion_values); updateGroupMetrics(data.emotion_values); }
+
+    const fc=data.face_count||0;
+    document.getElementById('system-status').textContent = (fc===0)?'🟡 Sin rostros':(fc>=40?'🔴 Grupo grande':'🟢 Activo');
+  });
+
+  document.getElementById('pause-btn').addEventListener('click',function(){
+    isPaused=!isPaused;
+    this.textContent=isPaused?'▶️ Reanudar Análisis':'⏸️ Pausar Análisis';
+    this.className=isPaused
+      ?'inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700'
+      :'inline-flex items-center rounded-md bg-yellow-500 px-4 py-2 text-sm font-semibold text-white hover:bg-yellow-600';
+  });
+
+  document.getElementById('export-btn').addEventListener('click',function(){
+    alert('Exportación: agrega un endpoint para servir el último CSV en /emociones.');
+  });
+
+  document.getElementById('reset-btn').addEventListener('click',function(){
+    if(confirm('¿Reiniciar el análisis?')) location.reload();
+  });
+
+  function updateTime(){ document.getElementById('current-time').textContent=new Date().toLocaleString('es-ES'); }
+  document.addEventListener('DOMContentLoaded',()=>{ initGroupMetricsChart(); updateTime(); setInterval(updateTime,1000); socket.emit('get_current_data'); });
+  socket.on('connect',()=>{ document.getElementById('system-status').textContent='🟢 Conectado'; });
+  socket.on('disconnect',()=>{ document.getElementById('system-status').textContent='🔴 Desconectado'; });
+</script>
+{% endblock %}
