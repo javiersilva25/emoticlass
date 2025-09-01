@@ -30,10 +30,11 @@ def init_db():
         nombre_completo TEXT NOT NULL,
         correo TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
-        fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        rol TEXT NOT NULL DEFAULT 'profesor'
     )""")
 
-    # añadir "rol" si falta
+    # añadir "rol" si faltara (compatibilidad hacia atrás)
     if not _col_exists(cur, "usuarios", "rol"):
         cur.execute("ALTER TABLE usuarios ADD COLUMN rol TEXT NOT NULL DEFAULT 'profesor'")
 
@@ -59,7 +60,7 @@ def init_db_dominio():
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       usuario_id INTEGER NOT NULL,
       indice_camara INTEGER NOT NULL,
-      resolucion TEXT NOT NULL,                       -- '640x480'
+      resolucion TEXT NOT NULL,
       actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY(usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
     );
@@ -67,7 +68,7 @@ def init_db_dominio():
     -- Catálogo de asignaturas
     CREATE TABLE IF NOT EXISTS asignaturas (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      codigo TEXT UNIQUE NOT NULL,                    -- matematicas, lenguaje...
+      codigo TEXT UNIQUE NOT NULL,
       nombre TEXT NOT NULL
     );
 
@@ -75,7 +76,7 @@ def init_db_dominio():
     CREATE TABLE IF NOT EXISTS grados (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nivel TEXT NOT NULL CHECK(nivel IN ('pre-basica','basica','media')),
-      codigo TEXT NOT NULL,                           -- 1-basico, 3-medio...
+      codigo TEXT NOT NULL,
       UNIQUE(nivel, codigo)
     );
 
@@ -97,7 +98,6 @@ def init_db_dominio():
       usuario_id INTEGER NOT NULL,
       iniciado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       finalizado_en TIMESTAMP,
-      -- snapshot de contexto
       indice_camara INTEGER,
       resolucion TEXT,
       grado_id INTEGER,
@@ -113,15 +113,42 @@ def init_db_dominio():
       sesion_id TEXT NOT NULL,
       ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       conteo_rostros INTEGER NOT NULL,
-      emocion_predominante TEXT,                      -- feliz, triste, etc.
-      confianza REAL,                                 -- 0-100
-      distribucion TEXT NOT NULL,                     -- JSON string {"feliz":20.1,...}
-      carga_cognitiva REAL,                           -- 0-100
+      emocion_predominante TEXT,
+      confianza REAL,
+      distribucion TEXT NOT NULL,
+      carga_cognitiva REAL,
       FOREIGN KEY(sesion_id) REFERENCES sesion_analisis(id) ON DELETE CASCADE
     );
 
     CREATE INDEX IF NOT EXISTS idx_metrica_grupal_sesion_ts
       ON metrica_grupal(sesion_id, ts);
+
+    -- ===========================
+    -- NUEVO: Profesores y Cursos
+    -- ===========================
+    -- Profesores (1-1 con usuario de rol 'profesor')
+    CREATE TABLE IF NOT EXISTS profesores (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      usuario_id INTEGER UNIQUE NOT NULL,
+      titulo TEXT,
+      especialidad TEXT,
+      FOREIGN KEY(usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+    );
+
+    -- Cursos (profesor opcional; relación 1-N profesor->cursos)
+    CREATE TABLE IF NOT EXISTS cursos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nombre TEXT NOT NULL,                -- p.ej. "3°B"
+      grado_id INTEGER NOT NULL,
+      asignatura_id INTEGER NOT NULL,
+      profesor_id INTEGER,                 -- NULL si no asignado
+      FOREIGN KEY(grado_id) REFERENCES grados(id),
+      FOREIGN KEY(asignatura_id) REFERENCES asignaturas(id),
+      FOREIGN KEY(profesor_id) REFERENCES profesores(id) ON DELETE SET NULL,
+      UNIQUE(nombre, grado_id, asignatura_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_cursos_profesor ON cursos(profesor_id);
     """)
 
     # Semillas
@@ -260,7 +287,7 @@ def iniciar_sesion_analisis(usuario_id, indice_camara=None, resolucion=None, gra
         INSERT INTO sesion_analisis(usuario_id, indice_camara, resolucion, grado_id, asignatura_id)
         VALUES (?,?,?,?,?)
     """, (usuario_id, indice_camara, resolucion, grado_id, asignatura_id))
-    # recuperar id (TEXT uuid-like)
+    # recuperar id (TEXT uuid-like esperado en esquema original)
     cur.execute("SELECT id FROM sesion_analisis ORDER BY rowid DESC LIMIT 1")
     sid = cur.fetchone()["id"]
     conn.commit(); conn.close()
@@ -307,3 +334,140 @@ def obtener_metricas_por_sesion(sesion_id, limite=500):
             d["distribucion"] = {}
         filas.append(d)
     conn.close(); return filas
+
+# -----------------------------
+# Profesores (CRUD mínimo)
+# -----------------------------
+def crear_profesor(usuario_id, titulo=None, especialidad=None):
+    conn = get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("SELECT id, rol FROM usuarios WHERE id = ?", (usuario_id,))
+        u = cur.fetchone()
+        if not u:
+            conn.close(); return False, "Usuario no existe"
+        if u["rol"] != "profesor":
+            conn.close(); return False, "El usuario no tiene rol 'profesor'"
+
+        cur.execute("""
+            INSERT INTO profesores (usuario_id, titulo, especialidad)
+            VALUES (?,?,?)
+        """, (usuario_id, titulo, especialidad))
+        conn.commit(); conn.close()
+        return True, "Profesor creado"
+    except sqlite3.IntegrityError as e:
+        conn.close()
+        if "UNIQUE constraint failed: profesores.usuario_id" in str(e):
+            return False, "Ya existe un profesor para este usuario"
+        return False, "Error de integridad al crear profesor"
+    except Exception as e:
+        conn.close(); return False, f"Error inesperado: {e}"
+
+def listar_profesores():
+    conn = get_conn(); cur = conn.cursor()
+    cur.execute("""
+        SELECT p.id AS profesor_id, u.id AS usuario_id, u.rut, u.nombre_completo, u.correo,
+               p.titulo, p.especialidad
+        FROM profesores p
+        JOIN usuarios u ON u.id = p.usuario_id
+        ORDER BY u.nombre_completo ASC
+    """)
+    filas = [dict(r) for r in cur.fetchall()]
+    conn.close(); return filas
+
+def obtener_profesor_por_usuario(usuario_id):
+    conn = get_conn(); cur = conn.cursor()
+    cur.execute("""
+        SELECT p.id AS profesor_id, p.usuario_id, p.titulo, p.especialidad
+        FROM profesores p
+        WHERE p.usuario_id = ?
+        LIMIT 1
+    """, (usuario_id,))
+    row = cur.fetchone(); conn.close()
+    return dict(row) if row else None
+
+# -----------------------------
+# Cursos (CRUD mínimo)
+# -----------------------------
+def crear_curso(nombre, grado_id, asignatura_id, profesor_id=None):
+    conn = get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("SELECT id FROM grados WHERE id=?", (grado_id,))
+        if not cur.fetchone():
+            conn.close(); return False, "Grado no existe"
+        cur.execute("SELECT id FROM asignaturas WHERE id=?", (asignatura_id,))
+        if not cur.fetchone():
+            conn.close(); return False, "Asignatura no existe"
+
+        if profesor_id is not None:
+            cur.execute("SELECT id FROM profesores WHERE id=?", (profesor_id,))
+            if not cur.fetchone():
+                conn.close(); return False, "Profesor no existe"
+
+        cur.execute("""
+            INSERT INTO cursos (nombre, grado_id, asignatura_id, profesor_id)
+            VALUES (?,?,?,?)
+        """, (nombre, grado_id, asignatura_id, profesor_id))
+        conn.commit(); conn.close()
+        return True, "Curso creado"
+    except sqlite3.IntegrityError as e:
+        conn.close()
+        if "UNIQUE constraint failed: cursos.nombre, cursos.grado_id, cursos.asignatura_id" in str(e):
+            return False, "Ya existe un curso con ese nombre/grado/asignatura"
+        return False, "Error de integridad al crear curso"
+    except Exception as e:
+        conn.close(); return False, f"Error inesperado: {e}"
+
+def listar_cursos():
+    conn = get_conn(); cur = conn.cursor()
+    cur.execute("""
+        SELECT c.id, c.nombre,
+               g.id AS grado_id, g.nivel, g.codigo AS grado_codigo,
+               a.id AS asignatura_id, a.codigo AS asignatura_codigo, a.nombre AS asignatura_nombre,
+               c.profesor_id,
+               u.nombre_completo AS profesor_nombre, u.correo AS profesor_correo
+        FROM cursos c
+        JOIN grados g ON g.id = c.grado_id
+        JOIN asignaturas a ON a.id = c.asignatura_id
+        LEFT JOIN profesores p ON p.id = c.profesor_id
+        LEFT JOIN usuarios u ON u.id = p.usuario_id
+        ORDER BY c.id DESC
+    """)
+    filas = [dict(r) for r in cur.fetchall()]
+    conn.close(); return filas
+
+def listar_cursos_por_profesor(profesor_id):
+    conn = get_conn(); cur = conn.cursor()
+    cur.execute("""
+        SELECT c.id, c.nombre,
+               g.nivel, g.codigo AS grado_codigo,
+               a.codigo AS asignatura_codigo, a.nombre AS asignatura_nombre
+        FROM cursos c
+        JOIN grados g ON g.id = c.grado_id
+        JOIN asignaturas a ON a.id = c.asignatura_id
+        WHERE c.profesor_id = ?
+        ORDER BY c.id DESC
+    """, (profesor_id,))
+    filas = [dict(r) for r in cur.fetchall()]
+    conn.close(); return filas
+
+def asignar_profesor_a_curso(curso_id, profesor_id):
+    conn = get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("SELECT id FROM cursos WHERE id=?", (curso_id,))
+        if not cur.fetchone():
+            conn.close(); return False, "Curso no existe"
+        cur.execute("SELECT id FROM profesores WHERE id=?", (profesor_id,))
+        if not cur.fetchone():
+            conn.close(); return False, "Profesor no existe"
+        cur.execute("UPDATE cursos SET profesor_id = ? WHERE id = ?", (profesor_id, curso_id))
+        conn.commit(); conn.close()
+        return True, "Profesor asignado al curso"
+    except Exception as e:
+        conn.close(); return False, f"Error inesperado: {e}"
+
+def eliminar_curso(curso_id):
+    conn = get_conn(); cur = conn.cursor()
+    cur.execute("DELETE FROM cursos WHERE id = ?", (curso_id,))
+    cambios = cur.rowcount
+    conn.commit(); conn.close()
+    return cambios > 0

@@ -194,6 +194,24 @@
             </div>
           </div>
         </div>
+        <div class="animate-fade-in-right" style="animation-delay: 0.55s;">
+          <label for="rol" class="block text-sm font-semibold text-text-primary mb-2">
+            Rol de Usuario
+            <span class="text-primary-teal">*</span>
+          </label>
+          <div class="relative">
+            <select id="rol" name="rol" required class="form-input peer">
+              {% for r in roles %}
+                <option value="{{ r }}" {% if r == 'profesor' %}selected{% endif %}>{{ r|capitalize }}</option>
+              {% endfor %}
+            </select>
+            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+              <svg class="w-5 h-5 text-text-light peer-focus:text-primary-teal transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
 
         <!-- Botón de registro -->
         <div class="animate-fade-in-up" style="animation-delay: 0.6s;">

@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, request, session, redirect, url_fo
 
 from ..utils.rut import validar_rut
 from ..utils.db import verificar_usuario, crear_usuario
+from ..utils.roles import ROLES   # lista de roles válidos
 
 bp_auth = Blueprint("auth", __name__)
 
@@ -12,6 +13,9 @@ def _redir_si_autenticado():
     if session.get("logged_in") and request.endpoint in ("auth.login", "auth.register"):
         return redirect(url_for("core.config"))
 
+# ========================
+# Login
+# ========================
 @bp_auth.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -43,6 +47,9 @@ def login():
 
     return render_template("login.html")
 
+# ========================
+# Register
+# ========================
 @bp_auth.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -51,39 +58,48 @@ def register():
         correo = request.form.get("correo", "").strip()
         pwd = request.form.get("password", "").strip()
         cpwd = request.form.get("confirm_password", "").strip()
+        rol = request.form.get("rol", "profesor").strip()  # por defecto profesor
 
         if not all([rut, nombre, correo, pwd, cpwd]):
             flash("Por favor, complete todos los campos", "danger")
-            return render_template("register.html")
+            return render_template("register.html", roles=ROLES)
 
         if not validar_rut(rut):
             flash("RUT inválido", "danger")
-            return render_template("register.html")
+            return render_template("register.html", roles=ROLES)
 
         if len(nombre.split()) < 2:
             flash("Ingrese nombre y apellido completos", "danger")
-            return render_template("register.html")
+            return render_template("register.html", roles=ROLES)
 
         if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', correo):
             flash("Formato de correo electrónico inválido", "danger")
-            return render_template("register.html")
+            return render_template("register.html", roles=ROLES)
 
         if len(pwd) < 6:
             flash("La contraseña debe tener al menos 6 caracteres", "danger")
-            return render_template("register.html")
+            return render_template("register.html", roles=ROLES)
 
         if pwd != cpwd:
             flash("Las contraseñas no coinciden", "danger")
-            return render_template("register.html")
+            return render_template("register.html", roles=ROLES)
 
-        ok, msg = crear_usuario(rut, nombre, correo, pwd)
+        # validar rol
+        if rol not in ROLES:
+            flash("Rol inválido", "danger")
+            return render_template("register.html", roles=ROLES)
+
+        ok, msg = crear_usuario(rut, nombre, correo, pwd, rol)
         flash(msg, "success" if ok else "danger")
         if ok:
             flash("Ya puedes iniciar sesión con tus credenciales", "info")
             return redirect(url_for("auth.login"))
 
-    return render_template("register.html")
+    return render_template("register.html", roles=ROLES)
 
+# ========================
+# Logout
+# ========================
 @bp_auth.route("/logout")
 def logout():
     session.clear()
